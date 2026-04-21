@@ -13,6 +13,7 @@
     "start": "concurrently \"npm run dev\" \"npm run electron\""
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },

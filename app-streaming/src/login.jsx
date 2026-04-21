@@ -145,7 +145,7 @@ function Login({ onLogin }) {
             </div>
 
             <button
-              className="mt-4 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+              className="mt-4 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:scale-102 hover:-translate-y-0.5"
               type="submit"
             >
               Entrar al panel de transmision
