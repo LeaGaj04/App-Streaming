@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
 import Heroicons from '@heroicons/react'
 
@@ -62,6 +63,9 @@ const tallyStyles = {
   preview: 'bg-amber-400/15 text-amber-200 ring-1 ring-inset ring-amber-300/30',
   idle: 'bg-sky-400/15 text-sky-200 ring-1 ring-inset ring-sky-300/30',
 }
+
+
+
 
 function IconFrame({ children }) {
   return (
@@ -168,65 +172,73 @@ function App({ onLogout }) {
       platform: 'desktop',
       mode: 'prototype',
     }
+  const [sidebarAbierta, setSidebarAbierta] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarAbierta(prev => !prev);
+  };
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 xl:flex-row xl:items-start xl:px-7">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="mb-4">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
-                Navegacion
-              </p>
-              <h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-slate-50">
-                Control Room
-              </h2>
-            </div>
+        <button onClick={toggleSidebar} className='px-4 py-4'>
+          <div className={`${sidebarAbierta ? "block" : "hidden"}`}>
+            <Sidebar>
+              <SidebarHeader>
+                <div className="mb-4">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
+                    Navegacion
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-slate-50">
+                    Control Room
+                  </h2>
+                </div>
 
-            <SidebarSection>
-              <SidebarItem href="/search">
-                <SearchIcon />
-                <SidebarLabel>Buscar</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/inbox">
-                <ProfileIcon />
-                <SidebarLabel>Perfil</SidebarLabel>
-              </SidebarItem>
-            </SidebarSection>
-          </SidebarHeader>
+                <SidebarSection>
+                  <SidebarItem href="/search">
+                    <SearchIcon />
+                    <SidebarLabel>Buscar</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/inbox">
+                    <ProfileIcon />
+                    <SidebarLabel>Perfil</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+              </SidebarHeader>
 
-          <SidebarBody>
-            <SidebarSection>
-              <SidebarItem href="/" active>
-                <HomeIcon />
-                <SidebarLabel>Control LIVE</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/events">
-                <EventosIcon />
-                <SidebarLabel>Eventos</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/Atajos">
-                <AtajosIcon />
-                <SidebarLabel>Atajos</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/broadcasts">
-                <BroadcastIcon />
-                <SidebarLabel>Emision</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/Paneles">
-                <PanelesIcon />
-                <SidebarLabel>Paneles</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/settings">
-                <AjustesIcon />
-                <SidebarLabel>Ajustes</SidebarLabel>
-              </SidebarItem>
-            </SidebarSection>
-          </SidebarBody>
-        </Sidebar>
-
+              <SidebarBody>
+                <SidebarSection>
+                  <SidebarItem href="/" active>
+                    <HomeIcon />
+                    <SidebarLabel>Control LIVE</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/events">
+                    <EventosIcon />
+                    <SidebarLabel>Eventos</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/Atajos">
+                    <AtajosIcon />
+                    <SidebarLabel>Atajos</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/broadcasts">
+                    <BroadcastIcon />
+                    <SidebarLabel>Emision</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/Paneles">
+                    <PanelesIcon />
+                    <SidebarLabel>Paneles</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/settings">
+                    <AjustesIcon />
+                    <SidebarLabel>Ajustes</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+              </SidebarBody>
+            </Sidebar>
+          </div>
+        </button>
         <div className="flex min-h-screen w-full flex-col gap-6">
         <header className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-3xl">
