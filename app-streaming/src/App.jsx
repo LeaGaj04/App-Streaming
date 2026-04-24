@@ -183,7 +183,8 @@ function App({ onLogout }) {
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 xl:flex-row xl:items-start xl:px-7">
-        <button onClick={toggleSidebar} className='px-4 py-4'>
+        <button onClick={toggleSidebar} className='px-4 py-4 bg-black rounded-2xl'>
+              
           <div className={`${sidebarAbierta ? "block" : "hidden"}`}>
             <Sidebar>
               <SidebarHeader>
