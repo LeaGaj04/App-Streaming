@@ -67,6 +67,15 @@ const tallyStyles = {
 
 
 
+function SidebarIcon(){
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+    </svg>
+
+  )
+}
+
 function IconFrame({ children }) {
   return (
     <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/[0.06] text-slate-200">
@@ -183,63 +192,64 @@ function App({ onLogout }) {
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 xl:flex-row xl:items-start xl:px-7">
-        <button onClick={toggleSidebar} className='px-4 py-4 bg-black rounded-2xl'>
+
+        <button onClick={toggleSidebar} className='px-4 py-4 bg-black rounded-2xl'><SidebarIcon /></button>
+
               
-          <div className={`${sidebarAbierta ? "block" : "hidden"}`}>
-            <Sidebar>
-              <SidebarHeader>
-                <div className="mb-4">
-                  <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
-                    Navegacion
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-slate-50">
-                    Control Room
-                  </h2>
-                </div>
+        <div className= {`transition-all duration-300 ease-in-out overflow-hidden ${sidebarAbierta ? "max-w-[280px] opacity-100" : "max-w-0 opacity-0"`}>
+          <Sidebar>
+            <SidebarHeader>
+              <div className="mb-4">
+                <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
+                  Navegacion
+                </p>
+                <h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-slate-50">
+                  Control Room
+                </h2>
+              </div>
 
-                <SidebarSection>
-                  <SidebarItem href="/search">
-                    <SearchIcon />
-                    <SidebarLabel>Buscar</SidebarLabel>
-                  </SidebarItem>
-                  <SidebarItem href="/inbox">
-                    <ProfileIcon />
-                    <SidebarLabel>Perfil</SidebarLabel>
-                  </SidebarItem>
-                </SidebarSection>
-              </SidebarHeader>
+              <SidebarSection>
+                <SidebarItem href="/search">
+                  <SearchIcon />
+                  <SidebarLabel>Buscar</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="/inbox">
+                  <ProfileIcon />
+                  <SidebarLabel>Perfil</SidebarLabel>
+                </SidebarItem>
+              </SidebarSection>
+            </SidebarHeader>
 
-              <SidebarBody>
-                <SidebarSection>
-                  <SidebarItem href="/" active>
-                    <HomeIcon />
-                    <SidebarLabel>Control LIVE</SidebarLabel>
-                  </SidebarItem>
-                  <SidebarItem href="/events">
-                    <EventosIcon />
-                    <SidebarLabel>Eventos</SidebarLabel>
-                  </SidebarItem>
-                  <SidebarItem href="/Atajos">
-                    <AtajosIcon />
-                    <SidebarLabel>Atajos</SidebarLabel>
-                  </SidebarItem>
-                  <SidebarItem href="/broadcasts">
-                    <BroadcastIcon />
-                    <SidebarLabel>Emision</SidebarLabel>
-                  </SidebarItem>
-                  <SidebarItem href="/Paneles">
-                    <PanelesIcon />
-                    <SidebarLabel>Paneles</SidebarLabel>
-                  </SidebarItem>
-                  <SidebarItem href="/settings">
-                    <AjustesIcon />
-                    <SidebarLabel>Ajustes</SidebarLabel>
-                  </SidebarItem>
-                </SidebarSection>
-              </SidebarBody>
-            </Sidebar>
-          </div>
-        </button>
+            <SidebarBody>
+              <SidebarSection>
+                <SidebarItem href="/" active>
+                  <HomeIcon />
+                  <SidebarLabel>Control LIVE</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="/events">
+                  <EventosIcon />
+                  <SidebarLabel>Eventos</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="/Atajos">
+                  <AtajosIcon />
+                  <SidebarLabel>Atajos</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="/broadcasts">
+                  <BroadcastIcon />
+                  <SidebarLabel>Emision</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="/Paneles">
+                  <PanelesIcon />
+                  <SidebarLabel>Paneles</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="/settings">
+                  <AjustesIcon />
+                  <SidebarLabel>Ajustes</SidebarLabel>
+                </SidebarItem>
+              </SidebarSection>
+            </SidebarBody>
+          </Sidebar>
+        </div>
         <div className="flex min-h-screen w-full flex-col gap-6">
         <header className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-3xl">
