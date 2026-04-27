@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
-import Heroicons from '@heroicons/react'
-import { useNavigate } from 'react-router-dom'
 
 const cameraFeeds = [
   {
@@ -189,11 +187,11 @@ function App({ onLogout }) {
       platform: 'desktop',
       mode: 'prototype',
     }
-  const [sidebarAbierta, setSidebarAbierta] = useState(false);
+  const [sidebarAbierta, setSidebarAbierta] = useState(false)
 
   const toggleSidebar = () => {
-    setSidebarAbierta(prev => !prev);
-  };
+    setSidebarAbierta((prev) => !prev)
+  }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
@@ -201,10 +199,20 @@ function App({ onLogout }) {
 
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 xl:flex-row xl:items-start xl:px-7">
 
-        <button onClick={toggleSidebar} className='px-4 py-4 bg-black rounded-2xl'><SidebarIcon /></button>
+        <button
+          onClick={toggleSidebar}
+          className="rounded-2xl bg-black px-4 py-4"
+          type="button"
+        >
+          <SidebarIcon />
+        </button>
 
               
-        <div className= {`transition-all duration-300 ease-in-out overflow-hidden ${sidebarAbierta ? "max-w-[280px] opacity-100" : "max-w-0 opacity-0"`}>
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            sidebarAbierta ? 'max-w-[280px] opacity-100' : 'max-w-0 opacity-0'
+          }`}
+        >
           <Sidebar>
             <SidebarHeader>
               <div className="mb-4">
@@ -262,7 +270,6 @@ function App({ onLogout }) {
               </SidebarBody>
             </Sidebar>
           </div>
-        </button>
         <div className="flex min-h-screen w-full flex-col gap-6">
         <header className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-3xl">
@@ -506,12 +513,10 @@ function App({ onLogout }) {
             <div className="grid gap-3">
               {schedule.map((item) => (
                 <div
-                  className={`grid gap-1 rounded-2xl border bg-white/[0.03] px-4 py-3 ${
-                    item.state === 'active'
-                      ? 'border-orange-400/50'
-                      : 'border-white/10'
-                  }`}
                   key={`${item.time}-${item.event}`}
+                  className={`grid gap-1 rounded-2xl border bg-white/[0.03] px-4 py-3 ${
+                    item.state === 'active' ? 'border-orange-400/50' : 'border-white/10'
+                  }`}
                 >
                   <span className="text-sm text-slate-400">{item.time}</span>
                   <strong className="text-sm font-semibold text-slate-100">
