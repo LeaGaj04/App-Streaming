@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
-import Heroicons from '@heroicons/react'
-import { useNavigate } from 'react-router-dom'
+
 
 const cameraFeeds = [
   {
@@ -70,10 +69,18 @@ const tallyStyles = {
 
 function SidebarIcon(){
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="mx-auto size-6">
       <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
     </svg>
 
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
   )
 }
 
@@ -191,29 +198,45 @@ function App({ onLogout }) {
     }
   const [sidebarAbierta, setSidebarAbierta] = useState(false);
 
-  const toggleSidebar = () => {
-    setSidebarAbierta(prev => !prev);
-  };
-
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
-      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-6 px-4 py-4 sm:px-6 sm:py-6 xl:flex-row xl:items-start xl:px-7">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col gap-6 px-4 py-10 sm:px-6 sm:py-6 xl:flex-row xl:items-start xl:px-7">
 
-        <button onClick={toggleSidebar} className='px-4 py-4 bg-black rounded-2xl'><SidebarIcon /></button>
+        {!sidebarAbierta && (
+          <button
+            aria-label="Abrir sidebar"
+            className="h-14 w-14 shrink-0 rounded-2xl bg-black text-slate-100 transition hover:bg-slate-900"
+            onClick={() => setSidebarAbierta(true)}
+            type="button"
+          >
+            <SidebarIcon />
+          </button>
+        )}
 
               
-        <div className= {`transition-all duration-300 ease-in-out overflow-hidden ${sidebarAbierta ? "max-w-[280px] opacity-100" : "max-w-0 opacity-0"`}>
+        {sidebarAbierta && (
+        <div className="w-full max-w-[280px] shrink-0 overflow-hidden transition-all duration-300 ease-in-out">
           <Sidebar>
             <SidebarHeader>
-              <div className="mb-4">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
-                  Navegacion
-                </p>
-                <h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-slate-50">
-                  Control Room
-                </h2>
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
+                    Navegacion
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-slate-50">
+                    Control Room
+                  </h2>
+                </div>
+                <button
+                  aria-label="Cerrar sidebar"
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/[0.06] text-slate-300 transition hover:bg-white/[0.1] hover:text-white"
+                  onClick={() => setSidebarAbierta(false)}
+                  type="button"
+                >
+                  <CloseIcon />
+                </button>
               </div>
 
                 <SidebarSection>
@@ -262,7 +285,7 @@ function App({ onLogout }) {
               </SidebarBody>
             </Sidebar>
           </div>
-        </button>
+        )}
         <div className="flex min-h-screen w-full flex-col gap-6">
         <header className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-3xl">
@@ -357,7 +380,11 @@ function App({ onLogout }) {
                   Union Central 0
                 </span>
               </div>
+              
             </div>
+            <button className="flex-1 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
+              Fundido 300 ms
+            </button>
           </section>
 
           <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">

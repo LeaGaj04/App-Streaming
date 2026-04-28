@@ -8,8 +8,8 @@ const isDev = !app.isPackaged
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1400,
-    height: 900,
+    width: 1920,
+    height: 1080,
     minWidth: 1100,
     minHeight: 700,
     title: 'Control Room',
