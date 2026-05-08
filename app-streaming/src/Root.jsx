@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import App from './App.jsx'
 import Login from './login.jsx'
+import { Routes, Route} from 'react-router-dom'
 
 function Root() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -10,6 +11,14 @@ function Root() {
   }
 
   return <App onLogout={() => setIsAuthenticated(false)} />
+
+  return (
+    <Routes>
+      <Route path="/" element={<App />}/>
+      <Route path="/addCam" element={<addCam/>}/>
+    </Routes>
+  )
+
 }
 
 export default Root

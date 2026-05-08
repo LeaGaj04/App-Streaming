@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
+import { useNavigate } from  'react-router-dom'
 
 
 const cameraFeeds = [
@@ -190,6 +191,8 @@ function TallyBadge({ tally }) {
 }
 
 function App({ onLogout }) {
+const navigate = useNavigate();
+
   const runtime =
     window.controlRoom?.getRuntimeInfo?.() ?? {
       appName: 'Control Room',
@@ -201,6 +204,11 @@ function App({ onLogout }) {
   const toggleSidebar = () => {
     setSidebarAbierta((prev) => !prev)
   }
+
+  /* Navegar */
+  const irAddCam = () => {
+    navigate('/addCam')
+  };
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
@@ -385,8 +393,8 @@ function App({ onLogout }) {
               </div>
               
             </div>
-            <button className="flex-1 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
-              Fundido 300 ms
+            <button type="button" onClick={irAddCam} className="flex-1 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 mt-4 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
+              Agregar Camara
             </button>
           </section>
 
