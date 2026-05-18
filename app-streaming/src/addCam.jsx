@@ -1,9 +1,11 @@
-import { useNavigate } from 'react-router-dom'
 
-function App(){
-    return(
-        <div>
-            <h1>hola</h1>
-        </div>
-    )
+
+function AddCam() {
+  return (
+    <div>
+      <h1 className="text-white">hola</h1>
+    </div>
+  )
 }
+
+export default AddCam
