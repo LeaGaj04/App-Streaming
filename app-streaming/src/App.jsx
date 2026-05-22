@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
+import { useNavigate } from  'react-router-dom'
 
 // --- DATOS Y ESTILOS ---
 const cameraFeeds = [
@@ -55,19 +56,30 @@ function App({ onLogout }) {
     setPreviewId(temp)
   }
 
-  // --- LÓGICA DE CÁMARA (CORREGIDA) ---
-  const toggleTransmission = async () => {
-    if (isStreaming) {
-      videoRef.current?.srcObject?.getTracks().forEach(t => t.stop())
-      setIsStreaming(false)
-    } else {
-      try {
-        // Se quitó la restricción rígida de 1920x1080 para evitar el error/warning
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        if (videoRef.current) { videoRef.current.srcObject = stream; setIsStreaming(true); }
-      } catch (e) { alert("Error de cámara: Verifica los permisos del navegador.") }
+  return (
+    <span
+      className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] ${tallyStyles[tally] ?? tallyStyles.idle}`}
+    >
+      {labels[tally] ?? 'Libre'}
+    </span>
+  )
+}
+
+function App({ onLogout }) {
+const navigate = useNavigate();
+
+  const runtime =
+    window.controlRoom?.getRuntimeInfo?.() ?? {
+      appName: 'Control Room',
+      platform: 'desktop',
+      mode: 'prototype',
     }
   }
+
+  /* Navegar */
+  const irAddCam = () => {
+    navigate('/addCam')
+  };
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
@@ -120,7 +132,12 @@ function App({ onLogout }) {
                 <button onClick={handleCut} className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Corte Directo</button>
                 <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Auto Trans</button>
               </div>
-            </section>
+              
+            </div>
+            <button type="button" onClick={irAddCam} className="flex-1 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 mt-4 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
+              Agregar Camara
+            </button>
+          </section>
 
             {/* SECCIÓN PROGRAM (GLASS + ACTIVE) */}
             <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
