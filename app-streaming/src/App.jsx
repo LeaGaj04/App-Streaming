@@ -3,10 +3,10 @@ import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, Sidebar
 
 // --- DATOS Y ESTILOS ---
 const cameraFeeds = [
-  { id: 'cam-1', label: 'Camara 1', role: 'Master lateral', status: 'En linea', note: 'Seguimiento principal del juego' },
-  { id: 'cam-2', label: 'Camara 2', role: 'Arco norte', status: 'En linea', note: 'Ideal para tiros libres y area' },
-  { id: 'cam-3', label: 'Camara 3', role: 'Banca y staff', status: 'Listo', note: 'Reacciones y cambios' },
-  { id: 'cam-4', label: 'Camara 4', role: 'Movil cancha', status: 'Chequeo', note: 'Cercania para entrevistas' },
+  { id: 'cam-1', label: 'Camara 1', role: 'Master lateral', status: 'En linea', tally: 'program', note: 'Seguimiento principal del juego' },
+  { id: 'cam-2', label: 'Camara 2', role: 'Arco norte', status: 'En linea', tally: 'preview', note: 'Ideal para tiros libres y area' },
+  { id: 'cam-3', label: 'Camara 3', role: 'Banca y staff', status: 'Listo', tally: 'idle', note: 'Reacciones y cambios' },
+  { id: 'cam-4', label: 'Camara 4', role: 'Movil cancha', status: 'Chequeo', tally: 'idle', note: 'Cercania para entrevistas' },
 ]
 
 const scenes = [
@@ -39,212 +39,292 @@ function TallyBadge({ tally }) {
 function App({ onLogout }) {
   const [sidebarAbierta, setSidebarAbierta] = useState(false)
   const [isStreaming, setIsStreaming] = useState(false)
+  
+  // --- CONTROL DE NAVEGACIÓN ---
+  const [vistaActual, setVistaActual] = useState('live') // Puede ser 'live' o 'perfil'
+  
   const videoRef = useRef(null)
 
-  // --- LÓGICA DEL SWITCHER (NUEVO) ---
-  const [previewId, setPreviewId] = useState('cam-2')
-  const [programId, setProgramId] = useState('cam-1')
-
-  const previewCam = cameraFeeds.find(c => c.id === previewId)
-  const programCam = cameraFeeds.find(c => c.id === programId)
-
-  // Función para intercambiar Preview y Program al darle a "Corte"
-  const handleCut = () => {
-    const temp = programId
-    setProgramId(previewId)
-    setPreviewId(temp)
-  }
-
-  // --- LÓGICA DE CÁMARA (CORREGIDA) ---
   const toggleTransmission = async () => {
     if (isStreaming) {
       videoRef.current?.srcObject?.getTracks().forEach(t => t.stop())
       setIsStreaming(false)
     } else {
       try {
-        // Se quitó la restricción rígida de 1920x1080 para evitar el error/warning
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1920, height: 1080 } })
         if (videoRef.current) { videoRef.current.srcObject = stream; setIsStreaming(true); }
-      } catch (e) { alert("Error de cámara: Verifica los permisos del navegador.") }
+      } catch (e) { alert("Error de cámara") }
     }
+  }
+
+  // --- FUNCIÓN PARA CAMBIAR DE PÁGINA ---
+  const irAVista = (vista) => {
+    setVistaActual(vista)
+    setSidebarAbierta(false) // Cierra el menú automáticamente al seleccionar
   }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
       
-      {/* Rejilla decorativa original */}
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
       <div className="mx-auto flex min-h-screen w-full flex-col gap-6 p-4 sm:p-8 xl:p-10">
         
-        {/* HEADER ESTILO ORIGINAL */}
+        {/* HEADER */}
         <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
           <div className="max-w-3xl">
-            <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-slate-500">Liga amateur broadcast suite</p>
-            <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-50 sm:text-5xl xl:text-6xl">Control Room</h1>
+            <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-slate-500">
+              {vistaActual === 'live' ? 'Liga amateur broadcast suite' : 'Gestión de cuenta'}
+            </p>
+            <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-50 sm:text-5xl xl:text-6xl">
+              {vistaActual === 'live' ? 'Control Room' : 'Perfil de Usuario'}
+            </h1>
           </div>
           <div className="flex items-center gap-4">
-             <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
+             <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition">
+               <SidebarIcon />
+             </button>
              <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-slate-100 hover:bg-white/8 transition">Cerrar sesión</button>
           </div>
         </header>
 
-        {/* --- MAIN LAYOUT (Pantallas Grandes) --- */}
-        <main className="grid gap-6 relative z-10">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            {/* SECCIÓN PREVIEW (GLASS) */}
-            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">Siguiente corte</p>
-                  <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-50">Preview</h2>
-                </div>
-                <TallyBadge tally="preview" />
-              </div>
-              <div className="relative aspect-video w-full overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(160deg,rgba(53,48,22,0.82),rgba(10,10,10,0.95)),radial-gradient(circle_at_top,rgba(255,197,92,0.4),transparent_55%)]">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:22px_22px] opacity-35 mix-blend-screen" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <BroadcastIcon />
-                </div>
-                <div className="absolute left-6 top-6">
-                  {/* TEXTO DINÁMICO */}
-                  <span className="rounded-full bg-slate-950/80 px-3 py-1 text-[10px] uppercase font-bold text-amber-200 border border-amber-500/20">
-                    {previewCam?.label} - {previewCam?.role}
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {/* BOTÓN DE CORTE CON ONCLICK */}
-                <button onClick={handleCut} className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Corte Directo</button>
-                <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Auto Trans</button>
-              </div>
-            </section>
-
-            {/* SECCIÓN PROGRAM (GLASS + ACTIVE) */}
-            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">Salida actual</p>
-                  <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-50">Program</h2>
-                </div>
-                <TallyBadge tally={isStreaming ? 'program' : 'idle'} />
-              </div>
-              <div className={`relative aspect-video w-full overflow-hidden rounded-[24px] border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_40px_rgba(239,68,68,0.1)]' : 'border-white/10 bg-black'}`}>
-                
-                <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-0'}`} />
-
-                {!isStreaming && (
-                  <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(12,35,58,0.82),rgba(5,10,20,0.96)),radial-gradient(circle_at_top,rgba(54,115,176,0.55),transparent_50%)] flex items-center justify-center">
-                    <div className="text-center">
-                      <p className="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-bold">Offline</p>
-                    </div>
+        {/* --- RENDERIZADO CONDICIONAL DE VISTAS --- */}
+        {vistaActual === 'live' ? (
+          <main className="grid gap-6 relative z-10">
+            {/* --- AQUÍ ESTÁ TODA TU VISTA LIVE ORIGINAL --- */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* SECCIÓN PREVIEW */}
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">Siguiente corte</p>
+                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-50">Preview</h2>
                   </div>
-                )}
+                  <TallyBadge tally="preview" />
+                </div>
+                <div className="relative aspect-video w-full overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(160deg,rgba(53,48,22,0.82),rgba(10,10,10,0.95)),radial-gradient(circle_at_top,rgba(255,197,92,0.4),transparent_55%)]">
+                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:22px_22px] opacity-35 mix-blend-screen" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                    <BroadcastIcon />
+                  </div>
+                  <div className="absolute left-6 top-6">
+                    <span className="rounded-full bg-slate-950/80 px-3 py-1 text-[10px] uppercase font-bold text-amber-200 border border-amber-500/20">Cámara 2 - Arco Norte</span>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Corte Directo</button>
+                  <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Auto Trans</button>
+                </div>
+              </section>
 
-                {isStreaming && (
-                  <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none">
-                    <div className="flex justify-between items-start">
-                      <span className="bg-red-600 px-3 py-1 rounded text-[10px] font-black animate-pulse">LIVE</span>
-                      <div className="bg-slate-950/80 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
-                        {/* TEXTO DINÁMICO */}
-                        <p className="text-[10px] uppercase text-blue-400 font-bold">{programCam?.label} - {programCam?.role}</p>
+              {/* SECCIÓN PROGRAM */}
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">Salida actual</p>
+                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-50">Program</h2>
+                  </div>
+                  <TallyBadge tally={isStreaming ? 'program' : 'idle'} />
+                </div>
+                <div className={`relative aspect-video w-full overflow-hidden rounded-[24px] border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_40px_rgba(239,68,68,0.1)]' : 'border-white/10 bg-black'}`}>
+                  <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-0'}`} />
+                  {!isStreaming && (
+                    <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(12,35,58,0.82),rgba(5,10,20,0.96)),radial-gradient(circle_at_top,rgba(54,115,176,0.55),transparent_50%)] flex items-center justify-center">
+                      <div className="text-center">
+                        <p className="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-bold">Offline</p>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={toggleTransmission}
-                className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-orange-400 to-red-500 shadow-lg shadow-red-500/20' : 'bg-white text-slate-900 hover:bg-slate-200'}`}
-              >
-                {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
-              </button>
-            </section>
-          </div>
-
-          {/* --- PANEL DE CONTROL INFERIOR (GLASS) --- */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            {/* ESCENAS */}
-            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
-              <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Producción / Escenas</h3>
-              <div className="grid gap-2">
-                {scenes.map((s, i) => (
-                  <button key={s.id} className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-left hover:bg-white/[0.08] transition">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-blue-400">{i+1}</span>
-                    <div>
-                      <p className="text-sm font-bold text-slate-200">{s.name}</p>
-                      <p className="text-[10px] text-slate-500 uppercase">{s.source}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            {/* CÁMARAS (AHORA SON BOTONES INTERACTIVOS) */}
-            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
-              <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Fuentes de Video</h3>
-              <div className="grid gap-3">
-                {cameraFeeds.map(cam => {
-                  // Calculamos el estado real (Tally) de cada cámara
-                  const isProgram = programId === cam.id;
-                  const isPreview = previewId === cam.id;
-                  const currentTally = isProgram ? 'program' : (isPreview ? 'preview' : 'idle');
-
-                  return (
-                    <button 
-                      key={cam.id} 
-                      onClick={() => setPreviewId(cam.id)}
-                      className="w-full group flex items-center justify-between rounded-2xl bg-white/[0.03] p-3 border border-white/5 hover:bg-white/[0.08] transition text-left"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`h-2 w-2 rounded-full ${isProgram ? 'bg-red-500 shadow-[0_0_10px_red]' : (isPreview ? 'bg-amber-400' : 'bg-slate-600')}`} />
-                        <span className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">{cam.label}</span>
+                  )}
+                  {isStreaming && (
+                    <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none">
+                      <div className="flex justify-between items-start">
+                        <span className="bg-red-600 px-3 py-1 rounded text-[10px] font-black animate-pulse">LIVE</span>
+                        <div className="bg-slate-950/80 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
+                          <p className="text-[10px] uppercase text-blue-400 font-bold">Cam 1 Master</p>
+                        </div>
                       </div>
-                      <TallyBadge tally={currentTally} />
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={toggleTransmission}
+                  className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-orange-400 to-red-500 shadow-lg shadow-red-500/20' : 'bg-white text-slate-900 hover:bg-slate-200'}`}
+                >
+                  {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
+                </button>
+              </section>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Producción / Escenas</h3>
+                <div className="grid gap-2">
+                  {scenes.map((s, i) => (
+                    <button key={s.id} className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-left hover:bg-white/[0.08] transition">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-blue-400">{i+1}</span>
+                      <div>
+                        <p className="text-sm font-bold text-slate-200">{s.name}</p>
+                        <p className="text-[10px] text-slate-500 uppercase">{s.source}</p>
+                      </div>
                     </button>
-                  )
-                })}
+                  ))}
+                </div>
+              </section>
+
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Fuentes de Video</h3>
+                <div className="grid gap-3">
+                  {cameraFeeds.map(cam => (
+                    <div key={cam.id} className="flex items-center justify-between rounded-2xl bg-white/[0.03] p-3 border border-white/5">
+                      <div className="flex items-center gap-3">
+                        <div className={`h-2 w-2 rounded-full ${cam.tally === 'program' ? 'bg-red-500 shadow-[0_0_10px_red]' : 'bg-slate-600'}`} />
+                        <span className="text-sm font-bold">{cam.label}</span>
+                      </div>
+                      <TallyBadge tally={cam.tally} />
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Timeline & Eventos</h3>
+                <div className="space-y-3">
+                  <div className="rounded-2xl bg-blue-500/10 border border-blue-500/20 p-4">
+                    <p className="text-xs font-bold text-blue-400 uppercase">En progreso</p>
+                    <p className="text-sm text-slate-200 mt-1">Segundo tiempo - 68:14</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Gol Local</button>
+                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Tarjeta</button>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </main>
+        ) : (
+          
+          /* --- NUEVA VISTA: PERFIL --- */
+          <main className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+            
+            {/* TARJETA DE IDENTIFICACIÓN (Columna Izquierda) */}
+            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-8 backdrop-blur flex flex-col items-center text-center shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+              {/* Avatar Simulador */}
+              <div className="relative mb-6">
+                <div className="h-32 w-32 rounded-full border-4 border-white/10 bg-[linear-gradient(160deg,rgba(12,35,58,0.82),rgba(5,10,20,0.96))] flex items-center justify-center shadow-xl">
+                  <span className="text-4xl font-black text-slate-300">OP</span>
+                </div>
+                <div className="absolute bottom-1 right-1 h-6 w-6 rounded-full bg-emerald-500 border-4 border-slate-950 shadow-sm" title="En línea"></div>
+              </div>
+              
+              <h2 className="text-2xl font-bold text-white mb-1">Operador Principal</h2>
+              <p className="text-blue-400 text-xs font-bold uppercase tracking-[0.2em] mb-8">Administrador</p>
+              
+              <div className="w-full space-y-3">
+                <button className="w-full rounded-2xl bg-white text-slate-900 py-3.5 text-sm font-bold hover:bg-slate-200 transition">
+                  Editar Perfil
+                </button>
+                <button onClick={onLogout} className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 text-sm font-bold hover:bg-white/10 text-red-400 transition">
+                  Cerrar Sesión
+                </button>
               </div>
             </section>
 
-            {/* ACCIONES RÁPIDAS */}
-            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
-              <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Timeline & Eventos</h3>
-              <div className="space-y-3">
-                <div className="rounded-2xl bg-blue-500/10 border border-blue-500/20 p-4">
-                  <p className="text-xs font-bold text-blue-400 uppercase">En progreso</p>
-                  <p className="text-sm text-slate-200 mt-1">Segundo tiempo - 68:14</p>
+            {/* DETALLES Y ESTADÍSTICAS (Columna Derecha) */}
+            <div className="md:col-span-2 flex flex-col gap-6">
+              
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold border-b border-white/10 pb-4">Detalles de la Cuenta</h3>
+                
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-2">Correo Electrónico</label>
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+                      operador@ligaamateur.com
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-2">Teléfono de Contacto</label>
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+                      +56 9 1234 5678
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-2">Clave de Transmisión (RTMP Stream Key)</label>
+                    <div className="flex gap-3">
+                      <div className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-500 font-mono tracking-widest">
+                        ••••••••••••••••••••••••••••
+                      </div>
+                      <button className="rounded-xl bg-blue-600/20 border border-blue-500/30 px-6 py-3 text-xs font-bold text-blue-400 hover:bg-blue-600/40 transition">
+                        Copiar
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Gol Local</button>
-                  <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Tarjeta</button>
-                </div>
-              </div>
-            </section>
+              </section>
 
-          </div>
-        </main>
+              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold border-b border-white/10 pb-4">Estadísticas de Temporada</h3>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
+                    <span className="block text-3xl font-black text-white mb-1">42</span>
+                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Partidos</span>
+                  </div>
+                  <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
+                    <span className="block text-3xl font-black text-blue-400 mb-1">128</span>
+                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Horas Live</span>
+                  </div>
+                  <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
+                    <span className="block text-3xl font-black text-emerald-400 mb-1">99%</span>
+                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Estabilidad</span>
+                  </div>
+                  <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
+                    <span className="block text-3xl font-black text-white mb-1">1.2K</span>
+                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Espectadores</span>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+          </main>
+        )}
       </div>
 
-      {/* SIDEBAR OVERLAY (ESTILO ORIGINAL) */}
+      {/* --- SIDEBAR OVERLAY CON NAVEGACIÓN FUNCIONAL --- */}
       {sidebarAbierta && (
         <div className="fixed inset-0 z-50 flex">
-          <div className="w-[300px] border-r border-white/10 bg-slate-950 p-8 shadow-2xl relative z-10">
+          <div className="w-[300px] border-r border-white/10 bg-slate-950 p-8 shadow-2xl">
              <div className="flex justify-between items-center mb-10">
                 <h2 className="text-xl font-bold tracking-tighter">MENÚ</h2>
                 <button onClick={() => setSidebarAbierta(false)} className="p-2 bg-white/5 rounded-lg"><CloseIcon /></button>
              </div>
              <nav className="space-y-6">
                 <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Navegación</div>
-                <div className="flex items-center gap-4 text-blue-400 font-bold"><div className="h-2 w-2 rounded-full bg-blue-400" /> Control Live</div>
-                <div className="text-slate-400 hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
+                
+                {/* BOTÓN PARA IR AL CONTROL LIVE */}
+                <button 
+                  onClick={() => irAVista('live')} 
+                  className={`flex w-full items-center gap-4 font-bold transition-colors ${vistaActual === 'live' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
+                >
+                  {vistaActual === 'live' && <div className="h-2 w-2 rounded-full bg-blue-400" />} 
+                  Control Live
+                </button>
+
+                {/* BOTÓN PARA IR AL PERFIL */}
+                <button 
+                  onClick={() => irAVista('perfil')} 
+                  className={`flex w-full items-center gap-4 font-bold transition-colors ${vistaActual === 'perfil' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
+                >
+                  {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-blue-400" />} 
+                  Perfil de Usuario
+                </button>
+
+                <div className="text-slate-400 hover:text-white cursor-pointer transition pt-4">Ajustes del Sistema</div>
                 <div className="text-slate-400 hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
              </nav>
           </div>
-          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
+          <div className="flex-1 bg-slate-950/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
         </div>
       )}
     </div>
