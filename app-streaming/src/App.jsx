@@ -39,7 +39,10 @@ function TallyBadge({ tally }) {
 
 function App({ onLogout }) {
   const [sidebarAbierta, setSidebarAbierta] = useState(false)
-  const [isStreaming, setIsStreaming] = useState(false)
+  const [isStreaming] = useState(false)
+  const [toggleTransmission] = useState(() => {
+    isStreaming => !isStreaming
+  })
   const videoRef = useRef(null)
 
   // --- LÓGICA DEL SWITCHER (NUEVO) ---
@@ -56,26 +59,16 @@ function App({ onLogout }) {
     setPreviewId(temp)
   }
 
-  return (
-    <span
-      className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] ${tallyStyles[tally] ?? tallyStyles.idle}`}
-    >
-      {labels[tally] ?? 'Libre'}
-    </span>
-  )
-}
 
-function App({ onLogout }) {
 const navigate = useNavigate();
 
-  const runtime =
+  {/*const runtime =
     window.controlRoom?.getRuntimeInfo?.() ?? {
       appName: 'Control Room',
       platform: 'desktop',
       mode: 'prototype',
     }
-  }
-
+*/}
   /* Navegar */
   const irAddCam = () => {
     navigate('/addCam')
@@ -132,8 +125,6 @@ const navigate = useNavigate();
                 <button onClick={handleCut} className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Corte Directo</button>
                 <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Auto Trans</button>
               </div>
-              
-            </div>
             <button type="button" onClick={irAddCam} className="flex-1 rounded-2xl bg-linear-to-br from-orange-400 to-red-500 mt-4 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
               Agregar Camara
             </button>
