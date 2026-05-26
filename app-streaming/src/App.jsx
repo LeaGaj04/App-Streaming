@@ -10,6 +10,7 @@ const cameraFeeds = [
   { id: 'cam-4', label: 'Camara 4', role: 'Movil cancha', status: 'Chequeo', note: 'Cercania para entrevistas' },
 ]
 
+{/* COMENTAR QUE ES ESPECIFICAMENTE*/}
 const scenes = [
   { id: 'scene-open', name: 'Previa', source: 'Camara 3 + marcador + sponsor' },
   { id: 'scene-live', name: 'Partido', source: 'Camara 1 limpia + scoreboard' },
@@ -17,6 +18,7 @@ const scenes = [
   { id: 'scene-close', name: 'Cierre', source: 'Camara 4 + logo liga' },
 ]
 
+{/* COMENTAR QUE ES ESPECIFICAMENTE*/}
 const tallyStyles = {
   program: 'bg-red-500/15 text-red-300 ring-1 ring-inset ring-red-400/30',
   preview: 'bg-amber-400/15 text-amber-200 ring-1 ring-inset ring-amber-300/30',
@@ -28,6 +30,7 @@ function SidebarIcon() { return <svg xmlns="http://www.w3.org/2000/svg" fill="no
 function CloseIcon() { return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg> }
 function BroadcastIcon() { return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6"><path strokeLinecap="round" strokeLinejoin="round" d="M9.348 14.652a3.75 3.75 0 0 1 0-5.304m5.304 0a3.75 3.75 0 0 1 0 5.304m-7.425 2.121a6.75 6.75 0 0 1 0-9.546m9.546 0a6.75 6.75 0 0 1 0 9.546M5.106 18.894c-3.808-3.807-3.808-9.98 0-13.788m13.788 0c3.808 3.807 3.808 9.98 0 13.788M12 12h.008v.008H12V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg> }
 
+{/* COMENTAR QUE ES ESPECIFICAMENTE*/}
 function TallyBadge({ tally }) {
   const labels = { program: 'Program', preview: 'Preview', idle: 'Libre' }
   return (
@@ -70,6 +73,7 @@ const navigate = useNavigate();
     }
 */}
   /* Navegar */
+  const navigate = useNavigate();
   const irAddCam = () => {
     navigate('/addCam')
   };
@@ -93,6 +97,7 @@ const navigate = useNavigate();
              <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-slate-100 hover:bg-white/8 transition">Cerrar sesión</button>
           </div>
         </header>
+      
 
         {/* --- MAIN LAYOUT (Pantallas Grandes) --- */}
         <main className="grid gap-6 relative z-10">
@@ -163,12 +168,14 @@ const navigate = useNavigate();
                   </div>
                 )}
               </div>
-              <button
+
+              {/* ########## ERROR ##############*/}
+              {/* <button
                 onClick={toggleTransmission}
                 className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-orange-400 to-red-500 shadow-lg shadow-red-500/20' : 'bg-white text-slate-900 hover:bg-slate-200'}`}
               >
                 {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
-              </button>
+              </button> */}
             </section>
           </div>
 
@@ -232,29 +239,29 @@ const navigate = useNavigate();
                 </div>
               </div>
             </section>
-
           </div>
         </main>
-      </div>
 
-      {/* SIDEBAR OVERLAY (ESTILO ORIGINAL) */}
-      {sidebarAbierta && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="w-[300px] border-r border-white/10 bg-slate-950 p-8 shadow-2xl relative z-10">
-             <div className="flex justify-between items-center mb-10">
-                <h2 className="text-xl font-bold tracking-tighter">MENÚ</h2>
-                <button onClick={() => setSidebarAbierta(false)} className="p-2 bg-white/5 rounded-lg"><CloseIcon /></button>
-             </div>
-             <nav className="space-y-6">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Navegación</div>
-                <div className="flex items-center gap-4 text-blue-400 font-bold"><div className="h-2 w-2 rounded-full bg-blue-400" /> Control Live</div>
-                <div className="text-slate-400 hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
-                <div className="text-slate-400 hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
-             </nav>
+        {/* SIDEBAR OVERLAY (ESTILO ORIGINAL) */}
+        
+        {sidebarAbierta && (
+          <div className="fixed inset-0 z-50 flex">
+            <div className="w-[300px] border-r border-white/10 bg-slate-950 p-8 shadow-2xl relative z-10">
+              <div className="flex justify-between items-center mb-10">
+                  <h2 className="text-xl font-bold tracking-tighter">MENÚ</h2>
+                  <button onClick={() => setSidebarAbierta(false)} className="p-2 bg-white/5 rounded-lg"><CloseIcon /></button>
+              </div>
+              <nav className="space-y-6">
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Navegación</div>
+                  <div className="flex items-center gap-4 text-blue-400 font-bold"><div className="h-2 w-2 rounded-full bg-blue-400" /> Control Live</div>
+                  <div className="text-slate-400 hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
+                  <div className="text-slate-400 hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
+              </nav>
+            </div>
+            <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
           </div>
-          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
