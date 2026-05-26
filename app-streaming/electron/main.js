@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename)
 const isDev = !app.isPackaged
 
 function createWindow() {
-  const win = new BrowserWindow({
+  let mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     minWidth: 1100,
@@ -23,16 +23,27 @@ function createWindow() {
   })
 
   if (isDev) {
-    win.loadURL('http://localhost:5173')
+    mainWindow.loadURL('http://localhost:5173')
   } else {
-    win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
+    mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   }
 
   Menu.setApplicationMenu(null)
 }
 
+function createAddCamWindow() {
+  const addCamWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    minWidth: 400,
+    minHeight: 300,
+    title: 'Agregar Cámara'
+  })
+}
 app.whenReady().then(() => {
   createWindow()
+
+
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

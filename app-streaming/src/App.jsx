@@ -62,9 +62,6 @@ function App({ onLogout }) {
     setPreviewId(temp)
   }
 
-
-const navigate = useNavigate();
-
   {/*const runtime =
     window.controlRoom?.getRuntimeInfo?.() ?? {
       appName: 'Control Room',
@@ -169,13 +166,12 @@ const navigate = useNavigate();
                 )}
               </div>
 
-              {/* ########## ERROR ##############*/}
-              {/* <button
+              <button
                 onClick={toggleTransmission}
                 className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-orange-400 to-red-500 shadow-lg shadow-red-500/20' : 'bg-white text-slate-900 hover:bg-slate-200'}`}
               >
                 {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
-              </button> */}
+              </button>
             </section>
           </div>
 
