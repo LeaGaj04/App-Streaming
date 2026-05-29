@@ -1,9 +1,6 @@
-import { contextBridge } from 'electron'
+const { contextBridge, ipcRenderer } = require('electron')
 
-contextBridge.exposeInMainWorld('controlRoom', {
-  getRuntimeInfo: () => ({
-    appName: 'Control Room',
-    platform: process.platform,
-    mode: 'prototype',
-  }),
+contextBridge.exposeInMainWorld('electronAPI', {
+  abrirVentanaAjustes: () => ipcRenderer.send('abrir-ajustes-emision')
 })
+

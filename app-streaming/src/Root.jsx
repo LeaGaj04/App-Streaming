@@ -15,6 +15,9 @@ function Root() {
     <Routes>
       <Route path="/" element={<App onLogout={() => setIsAuthenticated(false)} />} />
       <Route path="/addCam" element={<AddCam />} />
+      <Route path="/dashboard" element={<App />} />
+      <Route path="/CamaraConfig" element={<AddCam />} />
+      
     </Routes>
   )
 }

@@ -252,6 +252,16 @@ function App({ onLogout }) {
                   <div className="flex items-center gap-4 text-blue-400 font-bold"><div className="h-2 w-2 rounded-full bg-blue-400" /> Control Live</div>
                   <div className="text-slate-400 hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
                   <div className="text-slate-400 hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
+                  <div className="text-slate-400 hover:text-white cursor-pointer transition">Configuración Perfil</div>
+                  <div 
+                      onClick={() => {
+                        window.electronAPI?.abrirVentanaAjustes();
+                        setSidebarAbierta(false); // Cierra el menú lateral
+                      }} 
+                      className="text-slate-400 hover:text-white cursor-pointer transition"
+                    >
+                      Ajustes de Emisión
+                    </div>
               </nav>
             </div>
             <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
