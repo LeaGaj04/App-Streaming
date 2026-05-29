@@ -28,14 +28,14 @@ function AddCam(onLogout) {
 
 import React from 'react'
 
-function AddCam() {
+{/*function AddCam() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
       <h1 className="text-2xl font-bold tracking-tighter mb-4">Ajustes de Emisión</h1>
       <p className="text-sm text-slate-400">Ventana emergente nativa lista para configurar.</p>
     </div>
   )
-}
+}*/}
 
 export default AddCam
 
