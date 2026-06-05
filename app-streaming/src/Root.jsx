@@ -17,7 +17,6 @@ function Root() {
       <Route path="/addCam" element={<AddCam />} />
       <Route path="/dashboard" element={<App />} />
       <Route path="/CamaraConfig" element={<AddCam />} />
-      
     </Routes>
   )
 }
