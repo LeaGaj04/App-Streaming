@@ -20,7 +20,7 @@ const scenes = [
 const tallyStyles = {
   program: 'bg-red-500/15 text-red-300 ring-1 ring-inset ring-red-400/30',
   preview: 'bg-amber-400/15 text-amber-200 ring-1 ring-inset ring-amber-300/30',
-  idle: 'bg-sky-400/15 text-sky-200 ring-1 ring-inset ring-sky-300/30',
+  idle: 'bg-white/5 text-white ring-1 ring-inset ring-white/10',
 }
 
 // --- ICONOS ---
@@ -76,7 +76,7 @@ function App({ onLogout }) {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(48,124,199,0.24),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,137,61,0.16),transparent_28%),linear-gradient(180deg,#10263d,#07111c_35%,#050a12_100%)] text-slate-200">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(185,28,28,0.1),transparent_32%),radial-gradient(circle_at_top_right,rgba(220,38,38,0.08),transparent_28%),linear-gradient(180deg,#1a0000,#080000_35%,#000000_100%)] text-white">
       
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
@@ -84,16 +84,16 @@ function App({ onLogout }) {
         
         <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
           <div className="max-w-3xl">
-            <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-slate-500">
+            <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-white">
               {vistaActual === 'live' ? 'Liga amateur broadcast suite' : 'Gestión de cuenta'}
             </p>
-            <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-50 sm:text-5xl xl:text-6xl">
+            <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl xl:text-6xl">
               {vistaActual === 'live' ? 'Control Room' : 'Perfil de Usuario'}
             </h1>
           </div>
           <div className="flex items-center gap-4">
              <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
-             <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-slate-100 hover:bg-white/8 transition">Cerrar sesión</button>
+             <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/8 transition">Cerrar sesión</button>
           </div>
         </header>
       
@@ -102,11 +102,11 @@ function App({ onLogout }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* PREVIEW */}
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">Siguiente corte</p>
-                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-50">Preview</h2>
+                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-white">Siguiente corte</p>
+                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">Preview</h2>
                   </div>
                   <TallyBadge tally="preview" />
                 </div>
@@ -116,7 +116,7 @@ function App({ onLogout }) {
                     <BroadcastIcon />
                   </div>
                   <div className="absolute left-6 top-6">
-                    <span className="rounded-full bg-slate-950/80 px-3 py-1 text-[10px] uppercase font-bold text-amber-200 border border-amber-500/20">
+                    <span className="rounded-full bg-black/80 px-3 py-1 text-[10px] uppercase font-bold text-amber-200 border border-amber-500/20">
                       {previewCam?.label} - {previewCam?.role}
                     </span>
                   </div>
@@ -125,17 +125,17 @@ function App({ onLogout }) {
                   <button onClick={handleCut} className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Corte Directo</button>
                   <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Auto Trans</button>
                 </div>
-                <button type="button" onClick={irAddCam} className="w-full rounded-2xl bg-linear-to-br from-orange-400 to-red-500 mt-4 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
+                <button type="button" onClick={irAddCam} className="w-full rounded-2xl bg-linear-to-br from-red-500 to-red-700 mt-4 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
                   Agregar Cámara
                 </button>
               </section>
 
               {/* PROGRAM */}
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-slate-500">Salida actual</p>
-                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-50">Program</h2>
+                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-white">Salida actual</p>
+                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">Program</h2>
                   </div>
                   <TallyBadge tally={isStreaming ? 'program' : 'idle'} />
                 </div>
@@ -144,9 +144,9 @@ function App({ onLogout }) {
                   <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-0'}`} />
 
                   {!isStreaming && (
-                    <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(12,35,58,0.82),rgba(5,10,20,0.96)),radial-gradient(circle_at_top,rgba(54,115,176,0.55),transparent_50%)] flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(58,12,12,0.82),rgba(20,5,5,0.96)),radial-gradient(circle_at_top,rgba(176,54,54,0.55),transparent_50%)] flex items-center justify-center">
                       <div className="text-center">
-                        <p className="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-bold">Offline</p>
+                        <p className="text-[10px] uppercase tracking-[0.4em] text-white font-bold">Offline</p>
                       </div>
                     </div>
                   )}
@@ -155,8 +155,8 @@ function App({ onLogout }) {
                     <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none">
                       <div className="flex justify-between items-start">
                         <span className="bg-red-600 px-3 py-1 rounded text-[10px] font-black animate-pulse">LIVE</span>
-                        <div className="bg-slate-950/80 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
-                          <p className="text-[10px] uppercase text-blue-400 font-bold">{programCam?.label} - {programCam?.role}</p>
+                        <div className="bg-black/80 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
+                          <p className="text-[10px] uppercase text-white font-bold">{programCam?.label} - {programCam?.role}</p>
                         </div>
                       </div>
                     </div>
@@ -165,7 +165,7 @@ function App({ onLogout }) {
 
                 <button
                   onClick={toggleTransmission}
-                  className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-orange-400 to-red-500 shadow-lg shadow-red-500/20' : 'bg-white text-slate-900 hover:bg-slate-200'}`}
+                  className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20' : 'bg-neutral-900 border border-white/20 text-white hover:bg-neutral-800'}`}
                 >
                   {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
                 </button>
@@ -174,23 +174,23 @@ function App({ onLogout }) {
 
             {/* PANEL INFERIOR */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Producción / Escenas</h3>
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Producción / Escenas</h3>
                 <div className="grid gap-2">
                   {scenes.map((s, i) => (
                     <button key={s.id} className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-left hover:bg-white/[0.08] transition">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-blue-400">{i+1}</span>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-white">{i+1}</span>
                       <div>
-                        <p className="text-sm font-bold text-slate-200">{s.name}</p>
-                        <p className="text-[10px] text-slate-500 uppercase">{s.source}</p>
+                        <p className="text-sm font-bold text-white">{s.name}</p>
+                        <p className="text-[10px] text-white uppercase">{s.source}</p>
                       </div>
                     </button>
                   ))}
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Fuentes de Video</h3>
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Fuentes de Video</h3>
                 <div className="grid gap-3">
                   {cameraFeeds.map(cam => {
                     const isProgram = programId === cam.id;
@@ -205,7 +205,7 @@ function App({ onLogout }) {
                       >
                         <div className="flex items-center gap-3">
                           <div className={`h-2 w-2 rounded-full ${isProgram ? 'bg-red-500 shadow-[0_0_10px_red]' : (isPreview ? 'bg-amber-400' : 'bg-slate-600')}`} />
-                          <span className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">{cam.label}</span>
+                          <span className="text-sm font-bold text-white group-hover:text-white transition-colors">{cam.label}</span>
                         </div>
                         <TallyBadge tally={currentTally} />
                       </button>
@@ -214,12 +214,12 @@ function App({ onLogout }) {
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-5 backdrop-blur">
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold">Timeline & Eventos</h3>
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
+                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Timeline & Eventos</h3>
                 <div className="space-y-3">
-                  <div className="rounded-2xl bg-blue-500/10 border border-blue-500/20 p-4">
-                    <p className="text-xs font-bold text-blue-400 uppercase">En progreso</p>
-                    <p className="text-sm text-slate-200 mt-1">Segundo tiempo - 68:14</p>
+                  <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
+                    <p className="text-xs font-bold text-white uppercase">En progreso</p>
+                    <p className="text-sm text-white mt-1">Segundo tiempo - 68:14</p>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Gol Local</button>
@@ -232,61 +232,61 @@ function App({ onLogout }) {
         ) : (
           /* PERFIL DE USUARIO */
           <main className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 animate-fadeIn">
-            <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-8 backdrop-blur flex flex-col items-center text-center shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+            <section className="rounded-[28px] border border-white/10 bg-black/75 p-8 backdrop-blur flex flex-col items-center text-center shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
               <div className="relative mb-6">
-                <div className="h-32 w-32 rounded-full border-4 border-white/10 bg-[linear-gradient(160deg,rgba(12,35,58,0.82),rgba(5,10,20,0.96))] flex items-center justify-center shadow-xl">
-                  <span className="text-4xl font-black text-slate-300">OP</span>
+                <div className="h-32 w-32 rounded-full border-4 border-white/10 bg-[linear-gradient(160deg,rgba(58,12,12,0.82),rgba(20,5,5,0.96))] flex items-center justify-center shadow-xl">
+                  <span className="text-4xl font-black text-white">OP</span>
                 </div>
-                <div className="absolute bottom-1 right-1 h-6 w-6 rounded-full bg-emerald-500 border-4 border-slate-950 shadow-sm"></div>
+                <div className="absolute bottom-1 right-1 h-6 w-6 rounded-full bg-emerald-500 border-4 border-black shadow-sm"></div>
               </div>
               <h2 className="text-2xl font-bold text-white mb-1">Operador Principal</h2>
-              <p className="text-blue-400 text-xs font-bold uppercase tracking-[0.2em] mb-8">Administrador Suite</p>
+              <p className="text-white text-xs font-bold uppercase tracking-[0.2em] mb-8">Administrador Suite</p>
               <div className="w-full space-y-3">
-                <button className="w-full rounded-2xl bg-white text-slate-900 py-3.5 text-sm font-bold hover:bg-slate-200 transition">Editar Perfil</button>
+                <button className="w-full rounded-2xl bg-neutral-900 border border-white/20 text-white py-3.5 text-sm font-bold hover:bg-neutral-800 transition">Editar Perfil</button>
                 <button onClick={onLogout} className="w-full rounded-2xl border border-white/10 bg-white/5 py-3.5 text-sm font-bold hover:bg-white/10 text-red-400 transition">Cerrar Sesión</button>
               </div>
             </section>
 
             <div className="md:col-span-2 flex flex-col gap-6">
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
-                <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold border-b border-white/10 pb-4">Detalles de la Cuenta</h3>
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-white font-bold border-b border-white/10 pb-4">Detalles de la Cuenta</h3>
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div>
-                    <label className="block text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-2">Correo Electrónico</label>
-                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">operador@ligaamateur.com</div>
+                    <label className="block text-[10px] uppercase tracking-[0.15em] text-white mb-2">Correo Electrónico</label>
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white">operador@ligaamateur.com</div>
                   </div>
                   <div>
-                    <label className="block text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-2">Puesto de Control</label>
-                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">Mesa Técnica Principal</div>
+                    <label className="block text-[10px] uppercase tracking-[0.15em] text-white mb-2">Puesto de Control</label>
+                    <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white">Mesa Técnica Principal</div>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-[10px] uppercase tracking-[0.15em] text-slate-500 mb-2">Clave de Transmisión (RTMP Stream Key)</label>
+                    <label className="block text-[10px] uppercase tracking-[0.15em] text-white mb-2">Clave de Transmisión (RTMP Stream Key)</label>
                     <div className="flex gap-3">
-                      <div className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-500 font-mono tracking-widest flex items-center">••••••••••••••••••••••••••••</div>
-                      <button className="rounded-xl bg-blue-600/20 border border-blue-500/30 px-6 py-3 text-xs font-bold text-blue-400 hover:bg-blue-600/40 transition">Copiar</button>
+                      <div className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white font-mono tracking-widest flex items-center">••••••••••••••••••••••••••••</div>
+                      <button className="rounded-xl bg-white/10 border border-white/20 px-6 py-3 text-xs font-bold text-white hover:bg-white/20 transition">Copiar</button>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-white/10 bg-slate-950/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
-                <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-slate-500 font-bold border-b border-white/10 pb-4">Rendimiento Técnico Histórico</h3>
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-white font-bold border-b border-white/10 pb-4">Rendimiento Técnico Histórico</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
                     <span className="block text-3xl font-black text-white mb-1">42</span>
-                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Transmisiones</span>
+                    <span className="text-[10px] uppercase tracking-widest text-white">Transmisiones</span>
                   </div>
                   <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
-                    <span className="block text-3xl font-black text-blue-400 mb-1">128h</span>
-                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Tiempo de Aire</span>
+                    <span className="block text-3xl font-black text-white mb-1">128h</span>
+                    <span className="text-[10px] uppercase tracking-widest text-white">Tiempo de Aire</span>
                   </div>
                   <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
                     <span className="block text-3xl font-black text-emerald-400 mb-1">99.8%</span>
-                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Uptime</span>
+                    <span className="text-[10px] uppercase tracking-widest text-white">Uptime</span>
                   </div>
                   <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
                     <span className="block text-3xl font-black text-white mb-1">0</span>
-                    <span className="text-[10px] uppercase tracking-widest text-slate-500">Fallas Críticas</span>
+                    <span className="text-[10px] uppercase tracking-widest text-white">Fallas Críticas</span>
                   </div>
                 </div>
               </section>
@@ -297,45 +297,45 @@ function App({ onLogout }) {
         {/* SIDEBAR OVERLAY */}
         {sidebarAbierta && (
           <div className="fixed inset-0 z-50 flex">
-            <div className="w-[300px] border-r border-white/10 bg-slate-950 p-8 shadow-2xl relative z-10">
+            <div className="w-[300px] border-r border-white/10 bg-black p-8 shadow-2xl relative z-10">
               <div className="flex justify-between items-center mb-10">
                   <h2 className="text-xl font-bold tracking-tighter">MENÚ</h2>
                   <button onClick={() => setSidebarAbierta(false)} className="p-2 bg-white/5 rounded-lg"><CloseIcon /></button>
               </div>
               <nav className="space-y-6">
-                  <div className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Navegación</div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-white">Navegación</div>
                   
                   <div 
                     onClick={() => irAVista('live')}
-                    className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'live' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
+                    className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'live' ? 'text-white' : 'text-white hover:text-white'}`}
                   >
-                    {vistaActual === 'live' && <div className="h-2 w-2 rounded-full bg-blue-400" />} 
+                    {vistaActual === 'live' && <div className="h-2 w-2 rounded-full bg-slate-300" />} 
                     Control Live
                   </div>
 
                   <div 
                     onClick={() => irAVista('perfil')}
-                    className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'perfil' ? 'text-blue-400' : 'text-slate-400 hover:text-white'}`}
+                    className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'perfil' ? 'text-white' : 'text-white hover:text-white'}`}
                   >
-                    {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-blue-400" />} 
+                    {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-slate-300" />} 
                     Configuración Perfil
                   </div>
                   
-                  <div className="text-slate-400 hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
-                  <div className="text-slate-400 hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
+                  <div className="text-white hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
+                  <div className="text-white hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
                   
                   <div 
                     onClick={() => {
                       window.electronAPI?.abrirVentanaAjustes();
                       setSidebarAbierta(false); 
                     }} 
-                    className="text-slate-400 hover:text-white cursor-pointer transition"
+                    className="text-white hover:text-white cursor-pointer transition"
                   >
                     Ajustes de Emisión
                   </div>
               </nav>
             </div>
-            <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
           </div>
         )}
       </div>
