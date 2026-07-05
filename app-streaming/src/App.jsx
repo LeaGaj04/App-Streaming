@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
 import { useNavigate } from 'react-router-dom'
 
@@ -43,8 +43,50 @@ function App({ onLogout }) {
   // CORRECCIÓN DE LA TRANSMISIÓN: Ahora sí cambia el estado correctamente
   const [isStreaming, setIsStreaming] = useState(false)
   const toggleTransmission = () => {
-    setIsStreaming(!isStreaming)
+    if (isStreaming) {
+      setIsStreaming(false);
+      setStreamTime(0);
+      setStreamName('');
+    } else {
+      setShowStartModal(true);
+    }
   }
+
+  // --- NUEVOS ESTADOS PARA MODAL Y CRONOLOGÍA ---
+  const [showStartModal, setShowStartModal] = useState(false);
+  const [tempStreamName, setTempStreamName] = useState('');
+  const [streamName, setStreamName] = useState('');
+  const [streamTime, setStreamTime] = useState(0);
+
+  useEffect(() => {
+    let interval = null;
+    if (isStreaming) {
+      interval = setInterval(() => {
+        setStreamTime(prev => prev + 1);
+      }, 1000);
+    } else if (!isStreaming && streamTime !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isStreaming, streamTime]);
+
+  const formatTime = (totalSeconds) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    if (hours > 0) {
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleStartStream = () => {
+    setStreamName(tempStreamName.trim() || 'Transmisión sin título');
+    setTempStreamName('');
+    setShowStartModal(false);
+    setStreamTime(0);
+    setIsStreaming(true);
+  };
   
   const videoRef = useRef(null)
 
@@ -188,13 +230,17 @@ function App({ onLogout }) {
               <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
                 <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Timeline & Eventos</h3>
                 <div className="space-y-3">
-                  <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
-                    <p className="text-xs font-bold text-white uppercase">En progreso</p>
-                    <p className="text-sm text-white mt-1">Segundo tiempo - 68:14</p>
+                  <div className={`rounded-2xl border p-4 transition-colors ${isStreaming ? 'bg-red-500/10 border-red-500/30' : 'bg-white/5 border-white/10'}`}>
+                    <p className={`text-xs font-bold uppercase ${isStreaming ? 'text-red-400' : 'text-white/50'}`}>
+                      {isStreaming ? 'En progreso' : 'Fuera de línea'}
+                    </p>
+                    <p className="text-sm text-white mt-1">
+                      {isStreaming ? `${streamName} - ${formatTime(streamTime)}` : '00:00'}
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Gol Local</button>
-                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5">Tarjeta</button>
+                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isStreaming}>Gol Local</button>
+                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isStreaming}>Tarjeta</button>
                   </div>
                 </div>
               </section>
@@ -263,6 +309,42 @@ function App({ onLogout }) {
               </section>
             </div>
           </main>
+        )}
+
+        {/* START MODAL */}
+        {showStartModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowStartModal(false)} />
+            <div className="relative z-10 w-full max-w-sm rounded-[24px] border border-white/10 bg-neutral-900 p-6 shadow-2xl animate-fadeIn">
+              <h3 className="mb-2 text-xl font-bold text-white">Iniciar Transmisión</h3>
+              <p className="mb-4 text-xs text-white/70">Asigna un nombre a este evento para la cronología.</p>
+              
+              <input 
+                type="text"
+                autoFocus
+                placeholder="Ej: Final Torneo Regional"
+                value={tempStreamName}
+                onChange={(e) => setTempStreamName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleStartStream()}
+                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white outline-none focus:border-red-500 transition-colors mb-6"
+              />
+              
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setShowStartModal(false)}
+                  className="flex-1 rounded-xl bg-white/5 py-3 text-xs font-bold text-white hover:bg-white/10 transition"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={handleStartStream}
+                  className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-bold text-white hover:bg-red-500 transition shadow-[0_0_15px_rgba(220,38,38,0.4)]"
+                >
+                  Comenzar
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* SIDEBAR OVERLAY */}
