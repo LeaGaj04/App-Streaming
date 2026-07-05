@@ -37,6 +37,23 @@ function TallyBadge({ tally }) {
   )
 }
 
+// --- COMPONENTE DE VIDEO PARA STREAMS ---
+function VideoPlayer({ stream, className }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (stream) {
+        videoRef.current.srcObject = stream;
+      } else {
+        videoRef.current.srcObject = null;
+      }
+    }
+  }, [stream]);
+
+  return <video ref={videoRef} autoPlay playsInline muted className={className} />;
+}
+
 function App({ onLogout }) {
   const [sidebarAbierta, setSidebarAbierta] = useState(false)
   
@@ -88,7 +105,55 @@ function App({ onLogout }) {
     setIsStreaming(true);
   };
   
-  const videoRef = useRef(null)
+  // --- CAPTURA DE CÁMARAS WEBRTC ---
+  const [streams, setStreams] = useState({});
+  const [hasCameras, setHasCameras] = useState(false);
+
+  useEffect(() => {
+    const initCameras = async () => {
+      try {
+        // Pedimos permiso inicial
+        const initialStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 } } });
+        
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        
+        const newStreams = {};
+        let defaultStream = initialStream;
+
+        for (let i = 0; i < cameraFeeds.length; i++) {
+          const feed = cameraFeeds[i];
+          if (videoDevices[i]) {
+            try {
+              const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { deviceId: { exact: videoDevices[i].deviceId } } 
+              });
+              newStreams[feed.id] = stream;
+              if (i === 0) defaultStream = stream; // Guardar el primero como fallback para los demás si faltan
+            } catch (e) {
+              newStreams[feed.id] = defaultStream;
+            }
+          } else {
+            // Si el usuario no tiene 4 cámaras físicas, duplicamos la principal para la demo
+            newStreams[feed.id] = defaultStream;
+          }
+        }
+        
+        setStreams(newStreams);
+        setHasCameras(true);
+      } catch (err) {
+        console.error("Error accediendo a las cámaras", err);
+      }
+    };
+    initCameras();
+    
+    // Limpieza de streams al desmontar
+    return () => {
+      Object.values(streams).forEach(stream => {
+        stream.getTracks().forEach(track => track.stop());
+      });
+    };
+  }, []);
 
   // --- CONTROL DE VISTAS ---
   const [vistaActual, setVistaActual] = useState('live')
@@ -146,7 +211,13 @@ function App({ onLogout }) {
                 </div>
                 <div className={`relative aspect-video w-full overflow-hidden rounded-[24px] border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_40px_rgba(239,68,68,0.1)]' : 'border-white/10 bg-black'}`}>
                   
-                  <video ref={videoRef} autoPlay playsInline muted className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-0'}`} />
+                  {hasCameras ? (
+                    <VideoPlayer stream={streams[programId]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-30 blur-[2px]'}`} />
+                  ) : (
+                    <div className="absolute inset-0 bg-black flex items-center justify-center">
+                      <span className="text-white/50 text-sm font-bold uppercase tracking-widest">Esperando señal de cámara...</span>
+                    </div>
+                  )}
 
                   {!isStreaming && (
                     <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(58,12,12,0.82),rgba(20,5,5,0.96)),radial-gradient(circle_at_top,rgba(176,54,54,0.55),transparent_50%)] flex items-center justify-center">
@@ -179,15 +250,19 @@ function App({ onLogout }) {
                         onClick={() => setProgramId(cam.id)}
                         className={`group flex flex-col items-center gap-2 rounded-2xl p-2 transition-all ${isProgram ? 'bg-red-500/10 border-red-500/50' : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.06]'} border`}
                       >
-                        <div className={`relative aspect-video w-full rounded-xl overflow-hidden border ${isProgram ? 'border-red-500' : 'border-white/10'} bg-black flex items-center justify-center`}>
-                          {!isOnline ? (
-                            <span className="text-[9px] uppercase font-bold text-white/40">Offline</span>
+                        <div className={`relative aspect-video w-full rounded-xl overflow-hidden border ${isProgram ? 'border-red-500' : 'border-white/10'} bg-black flex items-center justify-center group-hover:border-white/30 transition-colors`}>
+                          
+                          {hasCameras && streams[cam.id] ? (
+                            <VideoPlayer stream={streams[cam.id]} className="absolute inset-0 h-full w-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
                           ) : (
-                            <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(50,50,50,0.8),rgba(10,10,10,0.9))] flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
-                              <span className="text-[10px] font-bold text-white opacity-50">CAM</span>
-                            </div>
+                            <span className="text-[9px] uppercase font-bold text-white/40">Offline</span>
                           )}
-                          {isProgram && <div className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_red]" />}
+
+                          <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(0,0,0,0.1),rgba(0,0,0,0.6))] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                             <span className="text-[10px] font-bold text-white opacity-80">SELECCIONAR</span>
+                          </div>
+                          
+                          {isProgram && <div className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_red] z-10" />}
                         </div>
                         <span className={`text-[11px] font-bold uppercase tracking-wider ${isProgram ? 'text-red-400' : 'text-white'}`}>{cam.label}</span>
                       </button>
