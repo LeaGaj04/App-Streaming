@@ -52,17 +52,9 @@ function App({ onLogout }) {
   const [vistaActual, setVistaActual] = useState('live')
 
   // --- LÓGICA DEL SWITCHER ---
-  const [previewId, setPreviewId] = useState('cam-2')
   const [programId, setProgramId] = useState('cam-1')
 
-  const previewCam = cameraFeeds.find(c => c.id === previewId)
   const programCam = cameraFeeds.find(c => c.id === programId)
-
-  const handleCut = () => {
-    const temp = programId
-    setProgramId(previewId)
-    setPreviewId(temp)
-  }
 
   /* --- NAVEGACIÓN ENTRE ROUTER --- */
   const navigate = useNavigate()
@@ -99,36 +91,7 @@ function App({ onLogout }) {
       
         {vistaActual === 'live' ? (
           <main className="grid gap-6 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              
-              {/* PREVIEW */}
-              <section className="rounded-[28px] border border-white/10 bg-black/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-white">Siguiente corte</p>
-                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">Preview</h2>
-                  </div>
-                  <TallyBadge tally="preview" />
-                </div>
-                <div className="relative aspect-video w-full overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(160deg,rgba(53,48,22,0.82),rgba(10,10,10,0.95)),radial-gradient(circle_at_top,rgba(255,197,92,0.4),transparent_55%)]">
-                  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:22px_22px] opacity-35 mix-blend-screen" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                    <BroadcastIcon />
-                  </div>
-                  <div className="absolute left-6 top-6">
-                    <span className="rounded-full bg-black/80 px-3 py-1 text-[10px] uppercase font-bold text-amber-200 border border-amber-500/20">
-                      {previewCam?.label} - {previewCam?.role}
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <button onClick={handleCut} className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Corte Directo</button>
-                  <button className="rounded-2xl border border-white/10 bg-white/5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition">Auto Trans</button>
-                </div>
-                <button type="button" onClick={irAddCam} className="w-full rounded-2xl bg-linear-to-br from-red-500 to-red-700 mt-4 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5">
-                  Agregar Cámara
-                </button>
-              </section>
+            <div className="grid grid-cols-1 gap-6 max-w-5xl mx-auto w-full">
 
               {/* PROGRAM */}
               <section className="rounded-[28px] border border-white/10 bg-black/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
@@ -163,17 +126,49 @@ function App({ onLogout }) {
                   )}
                 </div>
 
-                <button
-                  onClick={toggleTransmission}
-                  className={`mt-4 w-full rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20' : 'bg-neutral-900 border border-white/20 text-white hover:bg-neutral-800'}`}
-                >
-                  {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
-                </button>
+                {/* MINI-PANTALLAS DE CÁMARAS */}
+                <div className="mt-6 grid grid-cols-4 gap-4">
+                  {cameraFeeds.map(cam => {
+                    const isProgram = programId === cam.id;
+                    const isOnline = cam.status === 'En linea' || cam.status === 'Listo';
+                    return (
+                      <button 
+                        key={cam.id}
+                        onClick={() => setProgramId(cam.id)}
+                        className={`group flex flex-col items-center gap-2 rounded-2xl p-2 transition-all ${isProgram ? 'bg-red-500/10 border-red-500/50' : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.06]'} border`}
+                      >
+                        <div className={`relative aspect-video w-full rounded-xl overflow-hidden border ${isProgram ? 'border-red-500' : 'border-white/10'} bg-black flex items-center justify-center`}>
+                          {!isOnline ? (
+                            <span className="text-[9px] uppercase font-bold text-white/40">Offline</span>
+                          ) : (
+                            <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(50,50,50,0.8),rgba(10,10,10,0.9))] flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
+                              <span className="text-[10px] font-bold text-white opacity-50">CAM</span>
+                            </div>
+                          )}
+                          {isProgram && <div className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_red]" />}
+                        </div>
+                        <span className={`text-[11px] font-bold uppercase tracking-wider ${isProgram ? 'text-red-400' : 'text-white'}`}>{cam.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="mt-6 flex gap-4">
+                  <button type="button" onClick={irAddCam} className="w-1/3 rounded-2xl border border-white/10 bg-white/5 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white/10">
+                    + Cámara
+                  </button>
+                  <button
+                    onClick={toggleTransmission}
+                    className={`w-2/3 rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20' : 'bg-neutral-900 border border-white/20 text-white hover:bg-neutral-800'}`}
+                  >
+                    {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
+                  </button>
+                </div>
               </section>
             </div>
 
             {/* PANEL INFERIOR */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto w-full">
               <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
                 <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Producción / Escenas</h3>
                 <div className="grid gap-2">
@@ -189,30 +184,6 @@ function App({ onLogout }) {
                 </div>
               </section>
 
-              <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Fuentes de Video</h3>
-                <div className="grid gap-3">
-                  {cameraFeeds.map(cam => {
-                    const isProgram = programId === cam.id;
-                    const isPreview = previewId === cam.id;
-                    const currentTally = isProgram ? 'program' : (isPreview ? 'preview' : 'idle');
-
-                    return (
-                      <button 
-                        key={cam.id} 
-                        onClick={() => setPreviewId(cam.id)}
-                        className="w-full group flex items-center justify-between rounded-2xl bg-white/[0.03] p-3 border border-white/5 hover:bg-white/[0.08] transition text-left"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`h-2 w-2 rounded-full ${isProgram ? 'bg-red-500 shadow-[0_0_10px_red]' : (isPreview ? 'bg-amber-400' : 'bg-slate-600')}`} />
-                          <span className="text-sm font-bold text-white group-hover:text-white transition-colors">{cam.label}</span>
-                        </div>
-                        <TallyBadge tally={currentTally} />
-                      </button>
-                    )
-                  })}
-                </div>
-              </section>
 
               <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
                 <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Timeline & Eventos</h3>
