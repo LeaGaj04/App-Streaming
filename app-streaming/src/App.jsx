@@ -56,7 +56,7 @@ function VideoPlayer({ stream, className }) {
 
 function App({ onLogout }) {
   const [sidebarAbierta, setSidebarAbierta] = useState(false)
-  
+
   // CORRECCIÓN DE LA TRANSMISIÓN: Ahora sí cambia el estado correctamente
   const [isStreaming, setIsStreaming] = useState(false)
   const toggleTransmission = () => {
@@ -104,7 +104,7 @@ function App({ onLogout }) {
     setStreamTime(0);
     setIsStreaming(true);
   };
-  
+
   // --- CAPTURA DE CÁMARAS WEBRTC ---
   const [streams, setStreams] = useState({});
   const [hasCameras, setHasCameras] = useState(false);
@@ -114,10 +114,10 @@ function App({ onLogout }) {
       try {
         // Pedimos permiso inicial
         const initialStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 } } });
-        
+
         const devices = await navigator.mediaDevices.enumerateDevices();
         const videoDevices = devices.filter(d => d.kind === 'videoinput');
-        
+
         const newStreams = {};
         let defaultStream = initialStream;
 
@@ -125,8 +125,8 @@ function App({ onLogout }) {
           const feed = cameraFeeds[i];
           if (videoDevices[i]) {
             try {
-              const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { deviceId: { exact: videoDevices[i].deviceId } } 
+              const stream = await navigator.mediaDevices.getUserMedia({
+                video: { deviceId: { exact: videoDevices[i].deviceId } }
               });
               newStreams[feed.id] = stream;
               if (i === 0) defaultStream = stream; // Guardar el primero como fallback para los demás si faltan
@@ -138,7 +138,7 @@ function App({ onLogout }) {
             newStreams[feed.id] = defaultStream;
           }
         }
-        
+
         setStreams(newStreams);
         setHasCameras(true);
       } catch (err) {
@@ -146,7 +146,7 @@ function App({ onLogout }) {
       }
     };
     initCameras();
-    
+
     // Limpieza de streams al desmontar
     return () => {
       Object.values(streams).forEach(stream => {
@@ -176,11 +176,11 @@ function App({ onLogout }) {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(185,28,28,0.1),transparent_32%),radial-gradient(circle_at_top_right,rgba(220,38,38,0.08),transparent_28%),linear-gradient(180deg,#1a0000,#080000_35%,#000000_100%)] text-white">
-      
+
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
       <div className="mx-auto flex min-h-screen w-full flex-col gap-6 p-4 sm:p-8 xl:p-10">
-        
+
         <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
           <div className="max-w-3xl">
             <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-white">
@@ -191,11 +191,11 @@ function App({ onLogout }) {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-             <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
-             <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/8 transition">Cerrar sesión</button>
+            <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
+            <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/8 transition">Cerrar sesión</button>
           </div>
         </header>
-      
+
         {vistaActual === 'live' ? (
           <main className="grid gap-6 relative z-10">
             <div className="grid grid-cols-1 gap-6 max-w-5xl mx-auto w-full">
@@ -210,7 +210,7 @@ function App({ onLogout }) {
                   <TallyBadge tally={isStreaming ? 'program' : 'idle'} />
                 </div>
                 <div className={`relative aspect-video w-full overflow-hidden rounded-[24px] border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_40px_rgba(239,68,68,0.1)]' : 'border-white/10 bg-black'}`}>
-                  
+
                   {hasCameras ? (
                     <VideoPlayer stream={streams[programId]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-30 blur-[2px]'}`} />
                   ) : (
@@ -245,13 +245,13 @@ function App({ onLogout }) {
                     const isProgram = programId === cam.id;
                     const isOnline = cam.status === 'En linea' || cam.status === 'Listo';
                     return (
-                      <button 
+                      <button
                         key={cam.id}
                         onClick={() => setProgramId(cam.id)}
                         className={`group flex flex-col items-center gap-2 rounded-2xl p-2 transition-all ${isProgram ? 'bg-red-500/10 border-red-500/50' : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.06]'} border`}
                       >
                         <div className={`relative aspect-video w-full rounded-xl overflow-hidden border ${isProgram ? 'border-red-500' : 'border-white/10'} bg-black flex items-center justify-center group-hover:border-white/30 transition-colors`}>
-                          
+
                           {hasCameras && streams[cam.id] ? (
                             <VideoPlayer stream={streams[cam.id]} className="absolute inset-0 h-full w-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
                           ) : (
@@ -259,9 +259,9 @@ function App({ onLogout }) {
                           )}
 
                           <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(0,0,0,0.1),rgba(0,0,0,0.6))] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                             <span className="text-[10px] font-bold text-white opacity-80">SELECCIONAR</span>
+                            <span className="text-[10px] font-bold text-white opacity-80">SELECCIONAR</span>
                           </div>
-                          
+
                           {isProgram && <div className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_red] z-10" />}
                         </div>
                         <span className={`text-[11px] font-bold uppercase tracking-wider ${isProgram ? 'text-red-400' : 'text-white'}`}>{cam.label}</span>
@@ -291,7 +291,7 @@ function App({ onLogout }) {
                 <div className="grid gap-2">
                   {scenes.map((s, i) => (
                     <button key={s.id} className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-left hover:bg-white/[0.08] transition">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-white">{i+1}</span>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-white">{i + 1}</span>
                       <div>
                         <p className="text-sm font-bold text-white">{s.name}</p>
                         <p className="text-[10px] text-white uppercase">{s.source}</p>
@@ -393,8 +393,8 @@ function App({ onLogout }) {
             <div className="relative z-10 w-full max-w-sm rounded-[24px] border border-white/10 bg-neutral-900 p-6 shadow-2xl animate-fadeIn">
               <h3 className="mb-2 text-xl font-bold text-white">Iniciar Transmisión</h3>
               <p className="mb-4 text-xs text-white/70">Asigna un nombre a este evento para la cronología.</p>
-              
-              <input 
+
+              <input
                 type="text"
                 autoFocus
                 placeholder="Ej: Final Torneo Regional"
@@ -403,15 +403,15 @@ function App({ onLogout }) {
                 onKeyDown={(e) => e.key === 'Enter' && handleStartStream()}
                 className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-sm text-white outline-none focus:border-red-500 transition-colors mb-6"
               />
-              
+
               <div className="flex gap-3">
-                <button 
+                <button
                   onClick={() => setShowStartModal(false)}
                   className="flex-1 rounded-xl bg-white/5 py-3 text-xs font-bold text-white hover:bg-white/10 transition"
                 >
                   Cancelar
                 </button>
-                <button 
+                <button
                   onClick={handleStartStream}
                   className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-bold text-white hover:bg-red-500 transition shadow-[0_0_15px_rgba(220,38,38,0.4)]"
                 >
@@ -427,40 +427,40 @@ function App({ onLogout }) {
           <div className="fixed inset-0 z-50 flex">
             <div className="w-[300px] border-r border-white/10 bg-black p-8 shadow-2xl relative z-10">
               <div className="flex justify-between items-center mb-10">
-                  <h2 className="text-xl font-bold tracking-tighter">MENÚ</h2>
-                  <button onClick={() => setSidebarAbierta(false)} className="p-2 bg-white/5 rounded-lg"><CloseIcon /></button>
+                <h2 className="text-xl font-bold tracking-tighter">MENÚ</h2>
+                <button onClick={() => setSidebarAbierta(false)} className="p-2 bg-white/5 rounded-lg"><CloseIcon /></button>
               </div>
               <nav className="space-y-6">
-                  <div className="text-[10px] uppercase tracking-[0.3em] text-white">Navegación</div>
-                  
-                  <div 
-                    onClick={() => irAVista('live')}
-                    className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'live' ? 'text-white' : 'text-white hover:text-white'}`}
-                  >
-                    {vistaActual === 'live' && <div className="h-2 w-2 rounded-full bg-slate-300" />} 
-                    Control Live
-                  </div>
+                <div className="text-[10px] uppercase tracking-[0.3em] text-white">Navegación</div>
 
-                  <div 
-                    onClick={() => irAVista('perfil')}
-                    className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'perfil' ? 'text-white' : 'text-white hover:text-white'}`}
-                  >
-                    {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-slate-300" />} 
-                    Configuración Perfil
-                  </div>
-                  
-                  <div className="text-white hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
-                  <div className="text-white hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
-                  
-                  <div 
-                    onClick={() => {
-                      window.electronAPI?.abrirVentanaAjustes();
-                      setSidebarAbierta(false); 
-                    }} 
-                    className="text-white hover:text-white cursor-pointer transition"
-                  >
-                    Ajustes de Emisión
-                  </div>
+                <div
+                  onClick={() => irAVista('live')}
+                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'live' ? 'text-white' : 'text-white hover:text-white'}`}
+                >
+                  {vistaActual === 'live' && <div className="h-2 w-2 rounded-full bg-slate-300" />}
+                  Control Live
+                </div>
+
+                <div
+                  onClick={() => irAVista('perfil')}
+                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'perfil' ? 'text-white' : 'text-white hover:text-white'}`}
+                >
+                  {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-slate-300" />}
+                  Configuración Perfil
+                </div>
+
+                <div className="text-white hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
+                <div className="text-white hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
+
+                <div
+                  onClick={() => {
+                    window.electronAPI?.abrirVentanaAjustes();
+                    setSidebarAbierta(false);
+                  }}
+                  className="text-white hover:text-white cursor-pointer transition"
+                >
+                  Ajustes de Emisión
+                </div>
               </nav>
             </div>
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarAbierta(false)} />
