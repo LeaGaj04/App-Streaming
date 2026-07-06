@@ -404,6 +404,21 @@ function App({ onLogout }) {
                       T. Roja
                     </button>
                   </div>
+                  <div className="mt-4 flex justify-end">
+                    <button 
+                      onClick={() => {
+                        if (window.confirm('¿Estás seguro de que deseas reiniciar todos los marcadores y tarjetas a cero?')) {
+                          setScoreLocal(0);
+                          setScoreVisitante(0);
+                          setYellowCardsLocal(0);
+                          setRedCardsLocal(0);
+                        }
+                      }}
+                      className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white/50 hover:bg-white/10 hover:text-white transition"
+                    >
+                      Reiniciar Marcador
+                    </button>
+                  </div>
                 </div>
               </section>
             </div>
