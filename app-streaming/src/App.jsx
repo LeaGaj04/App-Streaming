@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel, SidebarSection } from '@/components/sidebar'
 import { useNavigate } from 'react-router-dom'
+import { CanvasCompositor } from './components/CanvasCompositor'
 
 // --- DATOS Y ESTILOS ---
 const cameraFeeds = [
@@ -57,10 +58,18 @@ function VideoPlayer({ stream, className }) {
 function App({ onLogout }) {
   const [sidebarAbierta, setSidebarAbierta] = useState(false)
 
+  // Referencias para composición y grabación
+  const compositorRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+
   // CORRECCIÓN DE LA TRANSMISIÓN: Ahora sí cambia el estado correctamente
   const [isStreaming, setIsStreaming] = useState(false)
   const toggleTransmission = () => {
     if (isStreaming) {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
       setIsStreaming(false);
       setStreamTime(0);
       setStreamName('');
@@ -103,6 +112,44 @@ function App({ onLogout }) {
     setShowStartModal(false);
     setStreamTime(0);
     setIsStreaming(true);
+
+    if (compositorRef.current) {
+      try {
+        const stream = compositorRef.current.captureStream(30);
+        
+        // Comprobar mimeTypes soportados
+        let options = { mimeType: 'video/webm;codecs=vp9' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+          options = { mimeType: 'video/webm;codecs=vp8' };
+        }
+        
+        const mediaRecorder = new MediaRecorder(stream, options);
+        mediaRecorderRef.current = mediaRecorder;
+        recordedChunksRef.current = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            recordedChunksRef.current.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          document.body.appendChild(a);
+          a.style.display = 'none';
+          a.href = url;
+          a.download = `Grabacion_${new Date().toISOString().replace(/:/g, '-')}.webm`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        };
+
+        mediaRecorder.start();
+      } catch (e) {
+        console.error('Error al iniciar MediaRecorder', e);
+      }
+    }
   };
 
   // --- CAPTURA DE CÁMARAS WEBRTC ---
@@ -212,7 +259,11 @@ function App({ onLogout }) {
                 <div className={`relative aspect-video w-full overflow-hidden rounded-[24px] border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_40px_rgba(239,68,68,0.1)]' : 'border-white/10 bg-black'}`}>
 
                   {hasCameras ? (
-                    <VideoPlayer stream={streams[programId]} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-30 blur-[2px]'}`} />
+                    <CanvasCompositor 
+                      stream={streams[programId]} 
+                      compositorRef={compositorRef}
+                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-30 blur-[2px]'}`} 
+                    />
                   ) : (
                     <div className="absolute inset-0 bg-black flex items-center justify-center">
                       <span className="text-white/50 text-sm font-bold uppercase tracking-widest">Esperando señal de cámara...</span>
