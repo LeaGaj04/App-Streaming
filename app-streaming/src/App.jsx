@@ -140,15 +140,17 @@ function App({ onLogout }) {
         };
 
         mediaRecorder.onstop = () => {
-          const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          document.body.appendChild(a);
-          a.style.display = 'none';
-          a.href = url;
-          a.download = `Grabacion_${new Date().toISOString().replace(/:/g, '-')}.webm`;
-          a.click();
-          window.URL.revokeObjectURL(url);
+          if (window.confirm("La transmisión ha finalizado. ¿Deseas guardar el archivo de video (Grabación)?")) {
+            const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            document.body.appendChild(a);
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `Grabacion_${new Date().toISOString().replace(/:/g, '-')}.webm`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }
         };
 
         mediaRecorder.start();
