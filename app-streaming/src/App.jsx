@@ -84,6 +84,12 @@ function App({ onLogout }) {
   const [streamName, setStreamName] = useState('');
   const [streamTime, setStreamTime] = useState(0);
 
+  // --- ESTADOS DEL MARCADOR (OVERLAYS) ---
+  const [scoreLocal, setScoreLocal] = useState(0);
+  const [scoreVisitante, setScoreVisitante] = useState(0);
+  const [yellowCardsLocal, setYellowCardsLocal] = useState(0);
+  const [redCardsLocal, setRedCardsLocal] = useState(0);
+
   useEffect(() => {
     let interval = null;
     if (isStreaming) {
@@ -262,6 +268,10 @@ function App({ onLogout }) {
                     <CanvasCompositor 
                       stream={streams[programId]} 
                       compositorRef={compositorRef}
+                      scoreLocal={scoreLocal}
+                      scoreVisitante={scoreVisitante}
+                      yellowCards={yellowCardsLocal}
+                      redCards={redCardsLocal}
                       className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-30 blur-[2px]'}`} 
                     />
                   ) : (
@@ -364,9 +374,35 @@ function App({ onLogout }) {
                       {isStreaming ? `${streamName} - ${formatTime(streamTime)}` : '00:00'}
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isStreaming}>Gol Local</button>
-                    <button className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isStreaming}>Tarjeta</button>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button 
+                      onClick={() => setScoreLocal(prev => prev + 1)}
+                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-red-400 disabled:opacity-50 disabled:cursor-not-allowed transition" 
+                      disabled={!isStreaming}
+                    >
+                      Gol Local
+                    </button>
+                    <button 
+                      onClick={() => setScoreVisitante(prev => prev + 1)}
+                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition" 
+                      disabled={!isStreaming}
+                    >
+                      Gol Visita
+                    </button>
+                    <button 
+                      onClick={() => setYellowCardsLocal(prev => prev + 1)}
+                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition" 
+                      disabled={!isStreaming}
+                    >
+                      T. Amarilla
+                    </button>
+                    <button 
+                      onClick={() => setRedCardsLocal(prev => prev + 1)}
+                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition" 
+                      disabled={!isStreaming}
+                    >
+                      T. Roja
+                    </button>
                   </div>
                 </div>
               </section>
