@@ -234,7 +234,7 @@ function App({ onLogout }) {
 
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(180deg,rgba(0,0,0,0.85),transparent)]" />
 
-      <div className="mx-auto flex min-h-screen w-full flex-col gap-6 p-4 sm:p-8 xl:p-10">
+      <div className="mx-auto flex min-h-screen w-full flex-col gap-4 p-4 xl:p-6 max-h-screen overflow-hidden">
 
         <header className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between relative z-10">
           <div className="flex items-center gap-6">
@@ -254,20 +254,17 @@ function App({ onLogout }) {
         </header>
 
         {vistaActual === 'live' && (
-          <main className="grid gap-6 relative z-10">
-            <div className="grid grid-cols-1 gap-6 max-w-5xl mx-auto w-full">
-
+          <main className="flex-1 flex flex-col xl:flex-row gap-4 relative z-10 w-full max-w-[1800px] mx-auto min-h-0 pb-4">
+            {/* LEFT SIDE: MAIN PROGRAM & CAMS */}
+            <div className="flex-1 flex flex-col gap-4 min-w-0">
+              
               {/* PROGRAM */}
-              <section className="rounded-[28px] border border-white/10 bg-black/75 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <p className="mb-1 text-[11px] uppercase tracking-[0.22em] text-white">Salida actual</p>
-                    <h2 className="text-2xl font-semibold tracking-[-0.04em] text-white">Program</h2>
-                  </div>
+              <section className="flex-1 rounded-xl border border-white/10 bg-[#0a0a0a]/90 p-3 shadow-lg backdrop-blur flex flex-col min-h-[300px]">
+                <div className="mb-2 flex items-center justify-between px-1">
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-white/80">Program</h2>
                   <TallyBadge tally={isStreaming ? 'program' : 'idle'} />
                 </div>
-                <div className={`relative aspect-video w-full overflow-hidden rounded-[24px] border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_40px_rgba(239,68,68,0.1)]' : 'border-white/10 bg-black'}`}>
-
+                <div className={`relative flex-1 w-full overflow-hidden rounded-lg border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_30px_rgba(239,68,68,0.15)]' : 'border-white/5 bg-black'}`}>
                   {hasCameras ? (
                     <CanvasCompositor 
                       stream={streams[programId]} 
@@ -276,159 +273,145 @@ function App({ onLogout }) {
                       scoreVisitante={scoreVisitante}
                       yellowCards={yellowCardsLocal}
                       redCards={redCardsLocal}
-                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-30 blur-[2px]'}`} 
+                      className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-40'}`} 
                     />
                   ) : (
                     <div className="absolute inset-0 bg-black flex items-center justify-center">
-                      <span className="text-white/50 text-sm font-bold uppercase tracking-widest">Esperando señal de cámara...</span>
+                      <span className="text-white/30 text-xs font-bold uppercase tracking-widest">Esperando señal...</span>
                     </div>
                   )}
 
                   {!isStreaming && (
-                    <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(58,12,12,0.82),rgba(20,5,5,0.96)),radial-gradient(circle_at_top,rgba(176,54,54,0.55),transparent_50%)] flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(58,12,12,0.8),rgba(20,5,5,0.95)),radial-gradient(circle_at_top,rgba(176,54,54,0.4),transparent_50%)] flex items-center justify-center">
                       <div className="text-center">
-                        <p className="text-[10px] uppercase tracking-[0.4em] text-white font-bold">Offline</p>
+                        <p className="text-[11px] uppercase tracking-[0.4em] text-white/80 font-bold">Offline</p>
                       </div>
                     </div>
                   )}
 
                   {isStreaming && (
-                    <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none">
+                    <div className="absolute inset-0 p-3 flex flex-col justify-between pointer-events-none">
                       <div className="flex justify-between items-start">
-                        <span className="bg-red-600 px-3 py-1 rounded text-[10px] font-black animate-pulse">LIVE</span>
-                        <div className="bg-black/80 backdrop-blur px-4 py-2 rounded-xl border border-white/10">
-                          <p className="text-[10px] uppercase text-white font-bold">{programCam?.label} - {programCam?.role}</p>
+                        <span className="bg-red-600 px-2.5 py-1 rounded text-[9px] font-black animate-pulse">LIVE</span>
+                        <div className="bg-black/80 backdrop-blur px-2.5 py-1 rounded-md border border-white/10">
+                          <p className="text-[9px] uppercase text-white font-bold">{programCam?.label}</p>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
+              </section>
 
-                {/* MINI-PANTALLAS DE CÁMARAS */}
-                <div className="mt-6 grid grid-cols-4 gap-4">
+              {/* MINI-PANTALLAS DE CÁMARAS */}
+              <section className="shrink-0 rounded-xl border border-white/10 bg-[#0a0a0a]/90 p-2 backdrop-blur">
+                <div className="grid grid-cols-4 gap-2">
                   {cameraFeeds.map(cam => {
                     const isProgram = programId === cam.id;
-                    const isOnline = cam.status === 'En linea' || cam.status === 'Listo';
                     return (
                       <button
                         key={cam.id}
                         onClick={() => setProgramId(cam.id)}
-                        className={`group flex flex-col items-center gap-2 rounded-2xl p-2 transition-all ${isProgram ? 'bg-red-500/10 border-red-500/50' : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.06]'} border`}
+                        className={`group relative aspect-video rounded-lg overflow-hidden border transition-all ${isProgram ? 'border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'border-white/10 hover:border-white/30'} bg-black flex items-center justify-center`}
                       >
-                        <div className={`relative aspect-video w-full rounded-xl overflow-hidden border ${isProgram ? 'border-red-500' : 'border-white/10'} bg-black flex items-center justify-center group-hover:border-white/30 transition-colors`}>
+                        {hasCameras && streams[cam.id] ? (
+                          <VideoPlayer stream={streams[cam.id]} className="absolute inset-0 h-full w-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                        ) : (
+                          <span className="text-[8px] uppercase font-bold text-white/30">Offline</span>
+                        )}
 
-                          {hasCameras && streams[cam.id] ? (
-                            <VideoPlayer stream={streams[cam.id]} className="absolute inset-0 h-full w-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
-                          ) : (
-                            <span className="text-[9px] uppercase font-bold text-white/40">Offline</span>
-                          )}
-
-                          <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(0,0,0,0.1),rgba(0,0,0,0.6))] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="text-[10px] font-bold text-white opacity-80">SELECCIONAR</span>
-                          </div>
-
-                          {isProgram && <div className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_red] z-10" />}
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_60%,rgba(0,0,0,0.8))] pointer-events-none" />
+                        
+                        <div className="absolute bottom-1.5 left-2 pointer-events-none">
+                           <span className={`text-[9px] font-bold uppercase tracking-wider ${isProgram ? 'text-red-400' : 'text-white'}`}>{cam.label}</span>
                         </div>
-                        <span className={`text-[11px] font-bold uppercase tracking-wider ${isProgram ? 'text-red-400' : 'text-white'}`}>{cam.label}</span>
+
+                        {isProgram && <div className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-500 shadow-[0_0_6px_red] z-10" />}
                       </button>
                     )
                   })}
                 </div>
-
-                <div className="mt-6 flex gap-3">
-                  <button type="button" onClick={irAddCam} className="flex-1 rounded-2xl border border-white/10 bg-white/5 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white/10">
-                    + Cámara
-                  </button>
-                  <button type="button" onClick={() => window.electronAPI?.abrirVentanaAjustes()} className="flex-1 rounded-2xl border border-white/10 bg-white/5 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white/10 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
-                    Ajustes
-                  </button>
-                  <button
-                    onClick={toggleTransmission}
-                    className={`flex-[2] rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20' : 'bg-neutral-900 border border-white/20 text-white hover:bg-neutral-800'}`}
-                  >
-                    {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
-                  </button>
-                </div>
               </section>
             </div>
 
-            {/* PANEL INFERIOR */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto w-full">
-              <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Producción / Escenas</h3>
-                <div className="grid gap-2">
+            {/* RIGHT SIDE: PANELS (Scenes, Timeline, Controls) */}
+            <div className="w-full xl:w-[340px] flex flex-col gap-4 shrink-0 overflow-y-auto">
+              
+              {/* CONTROLES */}
+              <section className="rounded-xl border border-white/10 bg-[#0a0a0a]/90 p-4 backdrop-blur shrink-0">
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={toggleTransmission}
+                    className={`w-full rounded-lg py-3 text-xs font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.3)] text-white hover:bg-red-500' : 'bg-white/10 border border-white/10 text-white hover:bg-white/20'}`}
+                  >
+                    {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
+                  </button>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => window.electronAPI?.abrirVentanaAjustes()} className="flex-1 rounded-lg border border-white/5 bg-white/[0.03] py-2.5 text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-white/10 flex items-center justify-center gap-1.5">
+                      ⚙️ Ajustes
+                    </button>
+                    <button type="button" onClick={irAddCam} className="flex-1 rounded-lg border border-white/5 bg-white/[0.03] py-2.5 text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-white/10">
+                      + Cámara
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              {/* Producción / Escenas */}
+              <section className="flex-1 rounded-xl border border-white/10 bg-[#0a0a0a]/90 p-4 backdrop-blur flex flex-col min-h-[150px]">
+                <h3 className="mb-2 text-[9px] uppercase tracking-[0.2em] text-white/50 font-bold">Escenas</h3>
+                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
                   {scenes.map((s, i) => (
-                    <button key={s.id} className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-left hover:bg-white/[0.08] transition">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-white">{i + 1}</span>
-                      <div>
-                        <p className="text-sm font-bold text-white">{s.name}</p>
-                        <p className="text-[10px] text-white uppercase">{s.source}</p>
+                    <button key={s.id} className="w-full flex items-center gap-2.5 rounded-lg border border-white/5 bg-white/[0.02] p-2 text-left hover:bg-white/[0.08] transition">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/5 text-[9px] font-bold text-white/70">{i + 1}</span>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-bold text-white truncate">{s.name}</p>
+                        <p className="text-[8px] text-white/40 uppercase truncate">{s.source}</p>
                       </div>
                     </button>
                   ))}
                 </div>
               </section>
 
-
-              <section className="rounded-[28px] border border-white/10 bg-black/75 p-5 backdrop-blur">
-                <h3 className="mb-4 text-[11px] uppercase tracking-[0.22em] text-white font-bold">Timeline & Eventos</h3>
-                <div className="space-y-3">
-                  <div className={`rounded-2xl border p-4 transition-colors ${isStreaming ? 'bg-red-500/10 border-red-500/30' : 'bg-white/5 border-white/10'}`}>
-                    <p className={`text-xs font-bold uppercase ${isStreaming ? 'text-red-400' : 'text-white/50'}`}>
+              {/* Timeline & Eventos */}
+              <section className="shrink-0 rounded-xl border border-white/10 bg-[#0a0a0a]/90 p-4 backdrop-blur">
+                <h3 className="mb-2 text-[9px] uppercase tracking-[0.2em] text-white/50 font-bold">Marcador y Eventos</h3>
+                <div className="space-y-2.5">
+                  <div className={`rounded-lg border p-2.5 flex justify-between items-center transition-colors ${isStreaming ? 'bg-red-500/10 border-red-500/30' : 'bg-white/5 border-white/5'}`}>
+                    <span className={`text-[9px] font-bold uppercase ${isStreaming ? 'text-red-400' : 'text-white/40'}`}>
                       {isStreaming ? 'En progreso' : 'Fuera de línea'}
-                    </p>
-                    <p className="text-sm text-white mt-1">
-                      {isStreaming ? `${streamName} - ${formatTime(streamTime)}` : '00:00'}
-                    </p>
+                    </span>
+                    <span className="text-xs font-mono font-bold text-white">
+                      {isStreaming ? formatTime(streamTime) : '00:00'}
+                    </span>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    <button 
-                      onClick={() => setScoreLocal(prev => prev + 1)}
-                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-red-400 disabled:opacity-50 disabled:cursor-not-allowed transition" 
-                      disabled={!isStreaming}
-                    >
-                      Gol Local
+                  
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button onClick={() => setScoreLocal(prev => prev + 1)} className="rounded-lg bg-white/5 p-2 text-[9px] font-bold uppercase border border-white/5 text-white hover:bg-white/10 transition" disabled={!isStreaming}>
+                      + Gol Loc ({scoreLocal})
                     </button>
-                    <button 
-                      onClick={() => setScoreVisitante(prev => prev + 1)}
-                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition" 
-                      disabled={!isStreaming}
-                    >
-                      Gol Visita
+                    <button onClick={() => setScoreVisitante(prev => prev + 1)} className="rounded-lg bg-white/5 p-2 text-[9px] font-bold uppercase border border-white/5 text-white hover:bg-white/10 transition" disabled={!isStreaming}>
+                      + Gol Vis ({scoreVisitante})
                     </button>
-                    <button 
-                      onClick={() => setYellowCardsLocal(prev => prev + 1)}
-                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition" 
-                      disabled={!isStreaming}
-                    >
+                    <button onClick={() => setYellowCardsLocal(prev => prev + 1)} className="rounded-lg bg-white/5 p-2 text-[9px] font-bold uppercase border border-white/5 text-yellow-500 hover:bg-white/10 transition" disabled={!isStreaming}>
                       T. Amarilla
                     </button>
-                    <button 
-                      onClick={() => setRedCardsLocal(prev => prev + 1)}
-                      className="rounded-xl bg-white/5 p-3 text-[10px] font-black uppercase hover:bg-white/10 border border-white/5 text-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition" 
-                      disabled={!isStreaming}
-                    >
+                    <button onClick={() => setRedCardsLocal(prev => prev + 1)} className="rounded-lg bg-white/5 p-2 text-[9px] font-bold uppercase border border-white/5 text-red-500 hover:bg-white/10 transition" disabled={!isStreaming}>
                       T. Roja
                     </button>
                   </div>
-                  <div className="mt-4 flex justify-end">
-                    <button 
-                      onClick={() => {
-                        if (window.confirm('¿Estás seguro de que deseas reiniciar todos los marcadores y tarjetas a cero?')) {
-                          setScoreLocal(0);
-                          setScoreVisitante(0);
-                          setYellowCardsLocal(0);
-                          setRedCardsLocal(0);
-                        }
-                      }}
-                      className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-white/50 hover:bg-white/10 hover:text-white transition"
-                    >
-                      Reiniciar Marcador
-                    </button>
-                  </div>
+
+                  <button onClick={() => {
+                      if (window.confirm('¿Reiniciar marcadores?')) {
+                        setScoreLocal(0); setScoreVisitante(0); setYellowCardsLocal(0); setRedCardsLocal(0);
+                      }
+                    }}
+                    className="w-full mt-1 rounded-lg border border-white/5 bg-transparent py-1.5 text-[9px] font-bold uppercase text-white/30 hover:bg-white/5 hover:text-white transition"
+                  >
+                    Reiniciar
+                  </button>
                 </div>
               </section>
+
             </div>
           </main>
         )}
