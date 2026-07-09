@@ -68,6 +68,7 @@ function App({ onLogout, cameraFeeds = [] }) {
       setStreamName('');
     } else {
       setShowStartModal(true);
+      setCamerasActive(true); // Encender cámaras automáticamente al iniciar transmisión
     }
   }
 
@@ -156,14 +157,16 @@ function App({ onLogout, cameraFeeds = [] }) {
   // --- CAPTURA DE CÁMARAS WEBRTC ---
   const [streams, setStreams] = useState({});
   const [hasCameras, setHasCameras] = useState(false);
+  const [camerasActive, setCamerasActive] = useState(false);
 
   useEffect(() => {
+    let localStreams = {};
+
     const initCameras = async () => {
       try {
         // Pedir permisos mínimos para asegurar acceso a dispositivos
         await navigator.mediaDevices.getUserMedia({ video: true }).catch(() => {});
 
-        const newStreams = {};
         let anyCameraActive = false;
 
         for (let i = 0; i < cameraFeeds.length; i++) {
@@ -173,7 +176,7 @@ function App({ onLogout, cameraFeeds = [] }) {
               const stream = await navigator.mediaDevices.getUserMedia({
                 video: { deviceId: { exact: feed.deviceId }, width: { ideal: 1280 } }
               });
-              newStreams[feed.id] = stream;
+              localStreams[feed.id] = stream;
               anyCameraActive = true;
             } catch (e) {
               console.warn(`No se pudo iniciar la cámara ${feed.label} con ID ${feed.deviceId}`, e);
@@ -181,21 +184,27 @@ function App({ onLogout, cameraFeeds = [] }) {
           }
         }
 
-        setStreams(newStreams);
+        setStreams(localStreams);
         setHasCameras(anyCameraActive);
       } catch (err) {
         console.error("Error crítico accediendo a las cámaras", err);
       }
     };
-    initCameras();
 
-    // Limpieza de streams al desmontar
+    if (camerasActive) {
+      initCameras();
+    } else {
+      setStreams({});
+      setHasCameras(false);
+    }
+
+    // Limpieza de streams al desmontar o apagar
     return () => {
-      Object.values(streams).forEach(stream => {
+      Object.values(localStreams).forEach(stream => {
         stream.getTracks().forEach(track => track.stop());
       });
     };
-  }, []);
+  }, [camerasActive, cameraFeeds]);
 
   // --- CONTROL DE VISTAS ---
   const [vistaActual, setVistaActual] = useState('live')
@@ -332,6 +341,14 @@ function App({ onLogout, cameraFeeds = [] }) {
                   >
                     {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
                   </button>
+                  
+                  <button
+                    onClick={() => setCamerasActive(!camerasActive)}
+                    className={`w-full rounded-lg py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all ${camerasActive ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 hover:bg-amber-500/30' : 'bg-transparent border border-white/20 text-white/70 hover:text-white hover:border-white/40'}`}
+                  >
+                    {camerasActive ? 'Apagar Cámaras' : 'Previsualizar Cámaras'}
+                  </button>
+
                   <div className="flex gap-2">
                     <button type="button" onClick={() => window.electronAPI?.abrirVentanaAjustes()} className="flex-1 rounded-lg border border-white/5 bg-white/[0.03] py-2.5 text-[10px] font-bold uppercase tracking-widest text-white transition hover:bg-white/10 flex items-center justify-center gap-1.5">
                       ⚙️ Ajustes
