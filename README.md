@@ -63,7 +63,34 @@ http://localhost:5173
 
 ## 📁 Estructura del Proyecto
 
-El proyecto está construido utilizando **React** y empaquetado con **Vite**. También incluye una configuración lista para integrarse como aplicación de escritorio con **Electron**.
+El proyecto está estructurado utilizando React y Vite, separando de forma clara la lógica del enrutador, las vistas principales, componentes visuales, y la configuración para su integración como aplicación de escritorio con Electron.
+
+```text
+├── 📁 app-streaming/          # Carpeta principal de la aplicación
+│   ├── 📁 electron/           # Código de backend para la versión de escritorio
+│   │   ├── main.js            # Proceso principal de Electron (Ventanas y comunicación)
+│   │   └── preload.js         # Script de seguridad (IPC)
+│   │
+│   ├── 📁 public/             # Archivos estáticos y recursos públicos
+│   │
+│   └── 📁 src/                # Código fuente principal de React
+│       ├── 📁 assets/         # Imágenes locales y gráficos
+│       │
+│       ├── 📁 components/     # Componentes reusables de la interfaz
+│       │   ├── CanvasCompositor.jsx # Motor de mezcla de video para la señal en vivo
+│       │   └── sidebar.jsx    # Barra de navegación
+│       │
+│       ├── App.jsx            # Vista principal: Control Room (Switcher)
+│       ├── Root.jsx           # Enrutamiento (React Router) y Estado Global (Cámaras)
+│       ├── addCam.jsx         # Vista: Asignación dinámica de hardware (Ajustes de cámara)
+│       ├── login.jsx          # Vista: Pantalla de inicio de sesión
+│       ├── index.css          # Estilos globales y variables de Tailwind CSS
+│       └── main.jsx           # Punto de entrada de la aplicación
+│
+├── vercel.json                # Configuración de despliegue para Vercel
+├── vite.config.js             # Configuración del servidor y empaquetador Vite
+└── package.json               # Scripts y dependencias del ecosistema
+```
 
 ## 🚀 Despliegue (Vercel)
 
