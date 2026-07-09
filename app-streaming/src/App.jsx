@@ -236,17 +236,19 @@ function App({ onLogout }) {
 
       <div className="mx-auto flex min-h-screen w-full flex-col gap-6 p-4 sm:p-8 xl:p-10">
 
-        <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
-          <div className="max-w-3xl">
-            <p className="mb-3 text-[11px] uppercase tracking-[0.28em] text-white">
-              {vistaActual === 'live' ? 'Liga amateur broadcast suite' : 'Gestión de cuenta'}
-            </p>
-            <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl xl:text-6xl">
-              {vistaActual === 'live' ? 'Control Room' : 'Perfil de Usuario'}
-            </h1>
+        <header className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between relative z-10">
+          <div className="flex items-center gap-6">
+            <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
+            <div className="max-w-3xl">
+              <p className="mb-2 text-[11px] uppercase tracking-[0.28em] text-white/70">
+                {vistaActual === 'live' ? 'Liga amateur broadcast suite' : 'Gestión de cuenta'}
+              </p>
+              <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl xl:text-6xl">
+                {vistaActual === 'live' ? 'Control Room' : 'Perfil de Usuario'}
+              </h1>
+            </div>
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
             <button onClick={onLogout} className="rounded-2xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/8 transition">Cerrar sesión</button>
           </div>
         </header>
@@ -333,13 +335,17 @@ function App({ onLogout }) {
                   })}
                 </div>
 
-                <div className="mt-6 flex gap-4">
-                  <button type="button" onClick={irAddCam} className="w-1/3 rounded-2xl border border-white/10 bg-white/5 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white/10">
+                <div className="mt-6 flex gap-3">
+                  <button type="button" onClick={irAddCam} className="flex-1 rounded-2xl border border-white/10 bg-white/5 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white/10">
                     + Cámara
+                  </button>
+                  <button type="button" onClick={() => window.electronAPI?.abrirVentanaAjustes()} className="flex-1 rounded-2xl border border-white/10 bg-white/5 py-4 text-sm font-bold uppercase tracking-widest text-white transition hover:bg-white/10 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                    Ajustes
                   </button>
                   <button
                     onClick={toggleTransmission}
-                    className={`w-2/3 rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20' : 'bg-neutral-900 border border-white/20 text-white hover:bg-neutral-800'}`}
+                    className={`flex-[2] rounded-2xl py-4 text-sm font-bold uppercase tracking-widest transition-all ${isStreaming ? 'bg-linear-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20' : 'bg-neutral-900 border border-white/20 text-white hover:bg-neutral-800'}`}
                   >
                     {isStreaming ? 'Detener Emisión' : 'Iniciar Transmisión'}
                   </button>
@@ -539,7 +545,7 @@ function App({ onLogout }) {
 
                 <div
                   onClick={() => irAVista('live')}
-                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'live' ? 'text-white' : 'text-white hover:text-white'}`}
+                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'live' ? 'text-white' : 'text-white/50 hover:text-white'}`}
                 >
                   {vistaActual === 'live' && <div className="h-2 w-2 rounded-full bg-slate-300" />}
                   Control Live
@@ -547,23 +553,10 @@ function App({ onLogout }) {
 
                 <div
                   onClick={() => irAVista('perfil')}
-                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'perfil' ? 'text-white' : 'text-white hover:text-white'}`}
+                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'perfil' ? 'text-white' : 'text-white/50 hover:text-white'}`}
                 >
                   {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-slate-300" />}
                   Configuración Perfil
-                </div>
-
-                <div className="text-white hover:text-white cursor-pointer transition">Ajustes del Sistema</div>
-                <div className="text-white hover:text-white cursor-pointer transition">Gestión de Cámaras</div>
-
-                <div
-                  onClick={() => {
-                    window.electronAPI?.abrirVentanaAjustes();
-                    setSidebarAbierta(false);
-                  }}
-                  className="text-white hover:text-white cursor-pointer transition"
-                >
-                  Ajustes de Emisión
                 </div>
               </nav>
             </div>
