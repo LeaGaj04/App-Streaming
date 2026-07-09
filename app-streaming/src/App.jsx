@@ -4,13 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { CanvasCompositor } from './components/CanvasCompositor'
 
 // --- DATOS Y ESTILOS ---
-const cameraFeeds = [
-  { id: 'cam-1', label: 'Camara 1', role: 'Master lateral', status: 'En linea', note: 'Seguimiento principal del juego' },
-  { id: 'cam-2', label: 'Camara 2', role: 'Arco norte', status: 'En linea', note: 'Ideal para tiros libres y area' },
-  { id: 'cam-3', label: 'Camara 3', role: 'Banca y staff', status: 'Listo', note: 'Reacciones y cambios' },
-  { id: 'cam-4', label: 'Camara 4', role: 'Movil cancha', status: 'Chequeo', note: 'Cercania para entrevistas' },
-]
-
 const scenes = [
   { id: 'scene-open', name: 'Previa', source: 'Camara 3 + marcador + sponsor' },
   { id: 'scene-live', name: 'Partido', source: 'Camara 1 limpia + scoreboard' },
@@ -55,7 +48,7 @@ function VideoPlayer({ stream, className }) {
   return <video ref={videoRef} autoPlay playsInline muted className={className} />;
 }
 
-function App({ onLogout }) {
+function App({ onLogout, cameraFeeds = [] }) {
   const [sidebarAbierta, setSidebarAbierta] = useState(false)
 
   // Referencias para composición y grabación
@@ -167,37 +160,31 @@ function App({ onLogout }) {
   useEffect(() => {
     const initCameras = async () => {
       try {
-        // Pedimos permiso inicial
-        const initialStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 } } });
-
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(d => d.kind === 'videoinput');
+        // Pedir permisos mínimos para asegurar acceso a dispositivos
+        await navigator.mediaDevices.getUserMedia({ video: true }).catch(() => {});
 
         const newStreams = {};
-        let defaultStream = initialStream;
+        let anyCameraActive = false;
 
         for (let i = 0; i < cameraFeeds.length; i++) {
           const feed = cameraFeeds[i];
-          if (videoDevices[i]) {
+          if (feed.deviceId) {
             try {
               const stream = await navigator.mediaDevices.getUserMedia({
-                video: { deviceId: { exact: videoDevices[i].deviceId } }
+                video: { deviceId: { exact: feed.deviceId }, width: { ideal: 1280 } }
               });
               newStreams[feed.id] = stream;
-              if (i === 0) defaultStream = stream; // Guardar el primero como fallback para los demás si faltan
+              anyCameraActive = true;
             } catch (e) {
-              newStreams[feed.id] = defaultStream;
+              console.warn(`No se pudo iniciar la cámara ${feed.label} con ID ${feed.deviceId}`, e);
             }
-          } else {
-            // Si el usuario no tiene 4 cámaras físicas, duplicamos la principal para la demo
-            newStreams[feed.id] = defaultStream;
           }
         }
 
         setStreams(newStreams);
-        setHasCameras(true);
+        setHasCameras(anyCameraActive);
       } catch (err) {
-        console.error("Error accediendo a las cámaras", err);
+        console.error("Error crítico accediendo a las cámaras", err);
       }
     };
     initCameras();
