@@ -261,26 +261,27 @@ function App({ onLogout, cameraFeeds = [] }) {
                   <TallyBadge tally={isStreaming ? 'program' : 'idle'} />
                 </div>
                 <div className={`relative flex-1 w-full overflow-hidden rounded-lg border transition-all duration-500 ${isStreaming ? 'border-red-500/40 shadow-[0_0_30px_rgba(239,68,68,0.15)]' : 'border-white/5 bg-black'}`}>
-                  {hasCameras ? (
-                    <CanvasCompositor 
-                      stream={streams[programId]} 
-                      compositorRef={compositorRef}
-                      scoreLocal={scoreLocal}
-                      scoreVisitante={scoreVisitante}
-                      yellowCards={yellowCardsLocal}
-                      redCards={redCardsLocal}
-                      className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${isStreaming ? 'opacity-100' : 'opacity-40'}`} 
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-black flex items-center justify-center">
-                      <span className="text-white/30 text-xs font-bold uppercase tracking-widest">Esperando señal...</span>
+                  {/* Siempre renderizar CanvasCompositor para que se vean los gráficos */}
+                  <CanvasCompositor 
+                    stream={hasCameras ? streams[programId] : null} 
+                    compositorRef={compositorRef}
+                    scoreLocal={scoreLocal}
+                    scoreVisitante={scoreVisitante}
+                    yellowCards={yellowCardsLocal}
+                    redCards={redCardsLocal}
+                    className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 opacity-100`} 
+                  />
+
+                  {!hasCameras && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <span className="text-white/30 text-xs font-bold uppercase tracking-widest bg-black/50 px-3 py-1 rounded">Esperando cámara...</span>
                     </div>
                   )}
 
                   {!isStreaming && (
-                    <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(58,12,12,0.8),rgba(20,5,5,0.95)),radial-gradient(circle_at_top,rgba(176,54,54,0.4),transparent_50%)] flex items-center justify-center">
-                      <div className="text-center">
-                        <p className="text-[11px] uppercase tracking-[0.4em] text-white/80 font-bold">Offline</p>
+                    <div className="absolute top-4 right-4 z-20 pointer-events-none">
+                      <div className="bg-black/80 border border-white/10 px-3 py-1 rounded text-center backdrop-blur shadow-xl">
+                        <p className="text-[9px] uppercase tracking-[0.2em] text-white/50 font-bold">Offline</p>
                       </div>
                     </div>
                   )}

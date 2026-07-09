@@ -30,54 +30,56 @@ export function CanvasCompositor({ stream, className, compositorRef, scoreLocal 
       video.play().catch(e => console.error("Error playing hidden video", e));
     } else {
       video.srcObject = null;
-      // Limpiar canvas si no hay stream
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     const drawFrame = () => {
-      if (video.readyState >= video.HAVE_CURRENT_DATA) {
-        // Dibujar el frame actual del video en el canvas
+      // 1. Limpiar canvas a negro siempre
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 2. Dibujar video si está disponible
+      if (stream && video.readyState >= video.HAVE_CURRENT_DATA) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // --- OVERLAYS: MARCADOR Y GRÁFICOS ---
-        const { scoreLocal, scoreVisitante, yellowCards, redCards } = overlayState.current;
-
-        // Fondo del marcador superior izquierdo
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(40, 40, 320, 70);
-
-        // Bordes de colores para los equipos
-        ctx.fillStyle = '#ef4444'; // Rojo (Local)
-        ctx.fillRect(40, 40, 10, 70);
-        ctx.fillStyle = '#3b82f6'; // Azul (Visitante)
-        ctx.fillRect(350, 40, 10, 70);
-
-        // Textos del Marcador
-        ctx.font = 'bold 36px Arial, sans-serif';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'left';
-        ctx.fillText(`LOC   ${scoreLocal}  -  ${scoreVisitante}   VIS`, 65, 88);
-
-        // Tarjetas Amarillas
-        if (yellowCards > 0) {
-          ctx.fillStyle = '#eab308'; // Amarillo oscuro
-          ctx.fillRect(40, 120, 20, 30);
-          ctx.font = 'bold 20px Arial, sans-serif';
-          ctx.fillStyle = 'black';
-          ctx.fillText(yellowCards.toString(), 45, 142);
-        }
-
-        // Tarjetas Rojas
-        if (redCards > 0) {
-          ctx.fillStyle = '#dc2626'; // Rojo oscuro
-          const startX = yellowCards > 0 ? 70 : 40; // Desplazar si ya hay amarilla
-          ctx.fillRect(startX, 120, 20, 30);
-          ctx.font = 'bold 20px Arial, sans-serif';
-          ctx.fillStyle = 'white';
-          ctx.fillText(redCards.toString(), startX + 5, 142);
-        }
       }
+
+      // 3. --- OVERLAYS: MARCADOR Y GRÁFICOS (SIEMPRE VISIBLES) ---
+      const { scoreLocal, scoreVisitante, yellowCards, redCards } = overlayState.current;
+
+      // Fondo del marcador superior izquierdo
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(40, 40, 320, 70);
+
+      // Bordes de colores para los equipos
+      ctx.fillStyle = '#ef4444'; // Rojo (Local)
+      ctx.fillRect(40, 40, 10, 70);
+      ctx.fillStyle = '#3b82f6'; // Azul (Visitante)
+      ctx.fillRect(350, 40, 10, 70);
+
+      // Textos del Marcador
+      ctx.font = 'bold 36px Arial, sans-serif';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'left';
+      ctx.fillText(`LOC   ${scoreLocal}  -  ${scoreVisitante}   VIS`, 65, 88);
+
+      // Tarjetas Amarillas
+      if (yellowCards > 0) {
+        ctx.fillStyle = '#eab308'; // Amarillo oscuro
+        ctx.fillRect(40, 120, 20, 30);
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.fillStyle = 'black';
+        ctx.fillText(yellowCards.toString(), 45, 142);
+      }
+
+      // Tarjetas Rojas
+      if (redCards > 0) {
+        ctx.fillStyle = '#dc2626'; // Rojo oscuro
+        const startX = yellowCards > 0 ? 70 : 40; // Desplazar si ya hay amarilla
+        ctx.fillRect(startX, 120, 20, 30);
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.fillStyle = 'white';
+        ctx.fillText(redCards.toString(), startX + 5, 142);
+      }
+
       requestRef.current = requestAnimationFrame(drawFrame);
     };
 
