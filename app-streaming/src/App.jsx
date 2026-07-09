@@ -241,10 +241,10 @@ function App({ onLogout }) {
             <button onClick={() => setSidebarAbierta(true)} className="rounded-2xl bg-white/5 border border-white/10 p-4 hover:bg-white/10 transition"><SidebarIcon /></button>
             <div className="max-w-3xl">
               <p className="mb-2 text-[11px] uppercase tracking-[0.28em] text-white/70">
-                {vistaActual === 'live' ? 'Liga amateur broadcast suite' : 'Gestión de cuenta'}
+                {vistaActual === 'live' ? 'Liga amateur broadcast suite' : vistaActual === 'perfil' ? 'Gestión de cuenta' : 'Centro de Ayuda'}
               </p>
               <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl xl:text-6xl">
-                {vistaActual === 'live' ? 'Control Room' : 'Perfil de Usuario'}
+                {vistaActual === 'live' ? 'Control Room' : vistaActual === 'perfil' ? 'Perfil de Usuario' : 'Soporte Técnico'}
               </h1>
             </div>
           </div>
@@ -253,7 +253,7 @@ function App({ onLogout }) {
           </div>
         </header>
 
-        {vistaActual === 'live' ? (
+        {vistaActual === 'live' && (
           <main className="grid gap-6 relative z-10">
             <div className="grid grid-cols-1 gap-6 max-w-5xl mx-auto w-full">
 
@@ -431,7 +431,9 @@ function App({ onLogout }) {
               </section>
             </div>
           </main>
-        ) : (
+        )}
+        
+        {vistaActual === 'perfil' && (
           /* PERFIL DE USUARIO */
           <main className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 animate-fadeIn">
             <section className="rounded-[28px] border border-white/10 bg-black/75 p-8 backdrop-blur flex flex-col items-center text-center shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
@@ -496,6 +498,60 @@ function App({ onLogout }) {
           </main>
         )}
 
+        {vistaActual === 'soporte' && (
+          /* AYUDA Y SOPORTE */
+          <main className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 animate-fadeIn max-w-6xl mx-auto w-full">
+            <div className="md:col-span-2 flex flex-col gap-6">
+              <section className="rounded-[28px] border border-white/10 bg-black/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)]">
+                <h2 className="text-2xl font-bold text-white mb-6">Guía Rápida de Uso</h2>
+                
+                <div className="space-y-6">
+                  <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+                    <h3 className="text-sm font-bold text-red-400 mb-2 uppercase tracking-wider">1. Configurar Cámaras</h3>
+                    <p className="text-sm text-white/70 leading-relaxed">
+                      Conecta tus dispositivos de video antes de iniciar. Utiliza el botón <strong className="text-white">+ Cámara</strong> en el Control Room para asignar las fuentes de video a los diferentes roles (Master, Arco, Banca). 
+                      Selecciona una cámara en las mini-pantallas para enviarla al <strong className="text-white">Program</strong> (pantalla principal).
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+                    <h3 className="text-sm font-bold text-red-400 mb-2 uppercase tracking-wider">2. Transmisión</h3>
+                    <p className="text-sm text-white/70 leading-relaxed">
+                      Presiona <strong className="text-white">Iniciar Transmisión</strong> para comenzar a emitir. Durante la transmisión, puedes cambiar de cámara en vivo y utilizar el panel de eventos para actualizar el marcador y tarjetas. Al finalizar, la app te permitirá descargar la grabación de manera local.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
+                    <h3 className="text-sm font-bold text-red-400 mb-2 uppercase tracking-wider">3. Ajustes de Emisión</h3>
+                    <p className="text-sm text-white/70 leading-relaxed">
+                      El botón de <strong className="text-white">⚙️ Ajustes</strong> te permite configurar tu clave RTMP, resolución, bitrate y otros parámetros del sistema. Es recomendable hacer esto antes de salir al aire.
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <section className="rounded-[28px] border border-white/10 bg-black/75 p-8 backdrop-blur shadow-[0_20px_60px_rgba(0,0,0,0.28)] flex flex-col">
+              <h3 className="mb-6 text-[11px] uppercase tracking-[0.22em] text-white font-bold border-b border-white/10 pb-4">Contacto de Soporte</h3>
+              <p className="text-sm text-white/60 mb-8">
+                Si experimentas fallas críticas durante una emisión o necesitas asistencia técnica urgente, contacta al equipo de soporte de Nivel 2.
+              </p>
+
+              <div className="space-y-6 mt-auto">
+                <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
+                  <span className="block text-xl font-black text-white mb-1">0800-555-LIGA</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/50">Teléfono (24/7)</span>
+                </div>
+                
+                <div className="rounded-2xl bg-white/[0.03] border border-white/5 p-4 text-center">
+                  <span className="block text-sm font-bold text-emerald-400 mb-1">soporte@ligaamateur.com</span>
+                  <span className="text-[10px] uppercase tracking-widest text-white/50">Correo Electrónico</span>
+                </div>
+              </div>
+            </section>
+          </main>
+        )}
+
         {/* START MODAL */}
         {showStartModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -557,6 +613,14 @@ function App({ onLogout }) {
                 >
                   {vistaActual === 'perfil' && <div className="h-2 w-2 rounded-full bg-slate-300" />}
                   Configuración Perfil
+                </div>
+
+                <div
+                  onClick={() => irAVista('soporte')}
+                  className={`flex items-center gap-4 font-bold cursor-pointer transition ${vistaActual === 'soporte' ? 'text-white' : 'text-white/50 hover:text-white'}`}
+                >
+                  {vistaActual === 'soporte' && <div className="h-2 w-2 rounded-full bg-slate-300" />}
+                  Ayuda y Soporte
                 </div>
               </nav>
             </div>
